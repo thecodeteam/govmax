@@ -94,6 +94,7 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	// Decode JSON of response into our interface defined for the specific request sent
 	case httpResp.StatusCode == 200 || httpResp.StatusCode == 201:
 		err = json.NewDecoder(httpResp.Body).Decode(resp)
+		return err
 	default:
 		return errors.New("JSON Build Error")
 	}

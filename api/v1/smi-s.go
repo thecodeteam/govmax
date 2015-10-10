@@ -66,7 +66,7 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	encodedAuth := base64.StdEncoding.EncodeToString([]byte(smis.username + ":" + smis.password))
 
 	// Add header specific items
-	req.Header.Add("Authorization", "Basic" + encodedAuth)
+	req.Header.Add("Authorization", "Basic " + encodedAuth)
 	req.Header.Add("Accept","application/json")
 	req.Header.Add("Content-Type","application/json")
 	req.Header.Add("Connection","Keep-Alive")
@@ -79,7 +79,7 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	}
 
 	// Cleanup Response
-	resp.Body.Close()
+	defer httpResp.Body.Close()
 
 	// Deal with errors
 	switch {

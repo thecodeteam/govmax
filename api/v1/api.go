@@ -1,57 +1,88 @@
 package apiv1
 
-import (
-	"errors"
-	"os"
-	"strconv"
-	)
+import ()
 
-type GetStoragePoolsResp_entries struct {
-	Entries `json:"entries"`
-	Content []struct {
-		StoragePoolName string `json:"i$ElementName"`
-		InstanceName string `json:"i$InstanceID"`
-		}
-	}
+type GetStoragePoolsResp struct {
+	Entries []struct {
+		Content struct {
+			I_ClientSettableUsage         []interface{} `json:"i$ClientSettableUsage"`
+			I_ConsumedResourceUnits       string        `json:"i$ConsumedResourceUnits"`
+			I_Description                 interface{}   `json:"i$Description"`
+			I_EMCCanBeUsedForRemoteMirror bool          `json:"i$EMCCanBeUsedForRemoteMirror"`
+			I_EMCDataFormat               string        `json:"i$EMCDataFormat"`
+			I_EMCDefaultSRPforFBAvolumes  bool          `json:"i$EMCDefaultSRPforFBAvolumes"`
+			I_EMCDiskDriveType            string        `json:"i$EMCDiskDriveType"`
+			I_EMCIsBound                  bool          `json:"i$EMCIsBound"`
+			I_EMCLocality                 []int         `json:"i$EMCLocality"`
+			I_EMCOversubscribedCapacity   int           `json:"i$EMCOversubscribedCapacity"`
+			I_EMCPercentReservedCapacity  int           `json:"i$EMCPercentReservedCapacity"`
+			I_EMCPercentSubscribed        int           `json:"i$EMCPercentSubscribed"`
+			I_EMCPercentageUsed           int           `json:"i$EMCPercentageUsed"`
+			I_EMCRemoteMirrorSpace        int           `json:"i$EMCRemoteMirrorSpace"`
+			I_EMCSnapshotSpace            int           `json:"i$EMCSnapshotSpace"`
+			I_EMCSubscribedCapacity       int           `json:"i$EMCSubscribedCapacity"`
+			I_ElementName                 string        `json:"i$ElementName"`
+			I_ElementsShareSpace          bool          `json:"i$ElementsShareSpace"`
+			I_HealthState                 int           `json:"i$HealthState"`
+			I_InstanceID                  string        `json:"i$InstanceID"`
+			I_LowSpaceWarningThreshold    int           `json:"i$LowSpaceWarningThreshold"`
+			I_OperationalStatus           []int         `json:"i$OperationalStatus"`
+			I_PoolID                      string        `json:"i$PoolID"`
+			I_Primordial                  bool          `json:"i$Primordial"`
+			I_RemainingManagedSpace       int           `json:"i$RemainingManagedSpace"`
+			I_SpaceLimit                  int           `json:"i$SpaceLimit"`
+			I_SpaceLimitDetermination     int           `json:"i$SpaceLimitDetermination"`
+			I_StatusDescriptions          []string      `json:"i$StatusDescriptions"`
+			I_ThinProvisionMetaDataSpace  int           `json:"i$ThinProvisionMetaDataSpace"`
+			I_TotalManagedSpace           int           `json:"i$TotalManagedSpace"`
+			I_Usage                       int           `json:"i$Usage"`
+		} `json:"content"`
+	} `json:"entries"`
+}
+
+
 //Get a list of all Storage Pools associated with SymmID
 func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err error){
-	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::" + sid + "/relationships/CIM_StoragePool", nil, &resp)
+	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::" + sid + "/relationships/Symm_SRPStoragePool", nil, &resp)
 	return resp,err
 }
 
 //Get a list of Storage Volumes to/associated with a Device Masking Group
-func (smis *SMIS) GetDeviceMaskingGroups(sid string) (resp *GetDeviceMaskingGroupsResp, err error){
-	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_DeviceMaskingGroup", nil, &resp)
-	return resp,err
-}
+//func (smis *SMIS) GetDeviceMaskingGroups(sid string) (resp *GetDeviceMaskingGroupsResp, err error){
+//	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_DeviceMaskingGroup", nil, &resp)
+//	return resp,err
+//}
 
 //Get a list of Storage Volumes on/associated with SymmID
-func (smis *SMIS) GetStorageVolumes(sid string) (resp *GetStorageVolumesResp, err error){
-	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
-	return resp,err
-}
+//func (smis *SMIS) GetStorageVolumes(sid string) (resp *GetStorageVolumesResp, err error){
+//	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
+//	return resp,err
+//}
 
-type PostVolumesReq struct {
+//type PostVolumesReq struct {
+//
+//}
 
-}
+//type PostVolumesContent struct {
 
-type PostVolumesContent struct {
-
-	ElementType string `json: "ElementType"`
-	Size string `json: "Size"`
-	ElementName string `json: "ElementName"`
-	EMCNumberOfDevices string `json: "EMCNumberOfDevices"`
-	Type string `json: "@type"`
-}
+//	ElementType string `json: "ElementType"`
+//	Size string `json: "Size"`
+//	ElementName string `json: "ElementName"`
+//	EMCNumberOfDevices string `json: "EMCNumberOfDevices"`
+//	Type string `json: "@type"`
+//}
 //Add goal struct later 
 
-type PostVolumesResp struct {
+//type PostVolumesResp struct {
 
-}
+//}
 
 //Create a Storage Volume
-func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolumesResp, err error){
-	err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateOrModifyElementFromStoragePool", req, &resp)
-	return resp,err
-}
+//func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolumesResp, err error){
+//	err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateOrModifyElementFromStoragePool", req, &resp)
+//	return resp,err
+//}
 
+//func (smis *SMIS) GetPorts(sid string) (resp *GetPortsResp, err error){
+//	return resp, err
+//}

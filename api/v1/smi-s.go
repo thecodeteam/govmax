@@ -3,12 +3,10 @@ package apiv1
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"encoding/base64"
 	"bytes"
+	"crypto/tls"
 )
 
 type SMIS struct {
@@ -17,26 +15,22 @@ type SMIS struct {
 	insecure bool
 	username string
 	password string
-	httpClient *http.Client
+	client *http.Client
 }
 
 func New(host string, port string, insecure bool, username string, password string) (*SMIS, error) {
 	if host == "" || port == "" || username == "" || password == "" {
-		return nill errors New("Missing host (SMIS Host IP), port (SMIS Host Port), username, or password \n Check Environment Variables..")
+		return nil, errors.New("Missing host (SMIS Host IP), port (SMIS Host Port), username, or password \n Check Environment Variables..")
 	}
 
 	var client *http.Client
 	if insecure {
-		client = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: insecure,
-				},
-			},
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-	}
-	else {
-		client= &http.Client{}
+		client = &http.Client{Transport: tr}
+	} else {
+		client = &http.Client{}
 	}
 
 	return &SMIS{host, port, insecure, username, password, client}, nil
@@ -48,19 +42,25 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	//      Setup http/JSON header request   //
 	///////////////////////////////////////////
 
+	var URL string
+
 	if smis.insecure {
-		URL := strings.Join([]string{"http://", smis.host, ":", smis.port, objectPath}, "")
-	}
-	else {
-		URL := strings.Join([]string{"https://", smis.host, ":", smis.port, objectPath}, "")
+		URL = "http://" + smis.host + ":" + smis.port + objectPath
+	} else {
+		URL = "https://" + smis.host + ":" + smis.port + objectPath
 	}
 
-	// Parse out body interface into JSON
-	bodyBytes, _ := json.Marshal(body)
 
-	// Create http resquest & add auth
-	req, err := http.NewRequest(httpType, URL, bytes.NewBuffer(bodyBytes))
-	req.SetBasicAuth(smis.username, smis.password)
+	// Create http request & add auth
+	var req *http.Request
+
+	if body != nil {
+		// Parse out body struct into JSON
+		bodyBytes, _ := json.Marshal(body)
+		req, _ = http.NewRequest(httpType, URL, bytes.NewBuffer(bodyBytes))
+	} else {
+		req, _ = http.NewRequest(httpType, URL, nil)
+	}
 
 	// Create Authorization token which is then added to header of request. Auth token is in the format of username:password then encoded in base64.
 	encodedAuth := base64.StdEncoding.EncodeToString([]byte(smis.username + ":" + smis.password))
@@ -69,12 +69,12 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	req.Header.Add("Authorization", "Basic " + encodedAuth)
 	req.Header.Add("Accept","application/json")
 	req.Header.Add("Content-Type","application/json")
-	req.Header.Add("Connection","Keep-Alive")
+	req.Header.Add("Connection","keep-alive")
 	req.Header.Add("Host",smis.host + ":" + smis.port)
 
 	// Perform request
 	httpResp, err := smis.client.Do(req)
-	if err != nill {
+	if err != nil {
 		return err
 	}
 

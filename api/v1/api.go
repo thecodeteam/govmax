@@ -46,18 +46,58 @@ func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err er
 	return resp,err
 }
 
-type GetDeviceMaskingGroupsResp struct {
-	Entries []struct{
-		Content []struct {
-			DeviceMaskingGroupName string `json:"i$ElementName"`
-			InstanceName string `json:"i$InstanceID"`
+type GetDeviceMaskingViewsResp struct {
+	Entries []struct {
+		Content struct {
+			_type                     string   `json:"@type"`
+			I_Caption                 string   `json:"i$Caption"`
+			I_CreationClassName       string   `json:"i$CreationClassName"`
+			I_Description             string   `json:"i$Description"`
+			I_DeviceID                string   `json:"i$DeviceID"`
+			I_EMCAdapterRole          string   `json:"i$EMCAdapterRole"`
+			I_ElementName             string   `json:"i$ElementName"`
+			I_EnabledDefault          int      `json:"i$EnabledDefault"`
+			I_EnabledState            int      `json:"i$EnabledState"`
+			I_Generation              int      `json:"i$Generation"`
+			I_HealthState             int      `json:"i$HealthState"`
+			I_MaxUnitsControlled      int      `json:"i$MaxUnitsControlled"`
+			I_Name                    string   `json:"i$Name"`
+			I_NameFormat              int      `json:"i$NameFormat"`
+			I_OperationalStatus       []int    `json:"i$OperationalStatus"`
+			I_OtherNameFormat         string   `json:"i$OtherNameFormat"`
+			I_RequestedState          int      `json:"i$RequestedState"`
+			I_StatusDescriptions      []string `json:"i$StatusDescriptions"`
+			I_SystemCreationClassName string   `json:"i$SystemCreationClassName"`
+			I_SystemName              string   `json:"i$SystemName"`
+			I_TransitioningToState    int      `json:"i$TransitioningToState"`
+			Links                     []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
 		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
 	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
+
+
 //Get a list of Device Masking Groups associated with SymmID
-func (smis *SMIS) GetDeviceMaskingGroups(sid string) (resp *GetDeviceMaskingGroupsResp, err error){
-	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_DeviceMaskingGroup", nil, &resp)
+func (smis *SMIS) GetDeviceMaskingViews(sid string) (resp *GetDeviceMaskingViewsResp, err error){
+	err = smis.query("GET","/ecom/edaa/root/emc/types/Symm_LunMaskingView/instances", nil, &resp)
 	return resp,err
 }
 

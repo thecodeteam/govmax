@@ -31,5 +31,14 @@ func TestGetStoragePools(*testing.T) {
 	}
 
 	fmt.Println(fmt.Sprintf("%+v", pools))
+}
 
+func TestGetDeviceMaskingViews(*testing.T) {
+
+	views, err := smis.GetDeviceMaskingViews("000196701380")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", views))
 }

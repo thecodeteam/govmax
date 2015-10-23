@@ -120,47 +120,50 @@ func (smis *SMIS) GetDeviceMaskingViews(sid string) (resp *GetDeviceMaskingViews
 }
 
 type GetStorageGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            _type                               string      `json:"@type"`
-            I_Caption                           string      `json:"i$Caption"`
-            I_DeleteOnEmpty                     bool        `json:"i$DeleteOnEmpty"`   
-            I_DeleteWhenBecomesUnassociated     bool        `json:"i$DeleteWhenBecomesUnassociated"`
-            I_ElementName                       string      `json:"i$ElementName"`
-            I_EMCAssociatedToView               bool        `json:"i$EMCAssociatedToView"`
-            I_EMCFastSetting                    string      `json:"i$EMCFastSetting"`
-            I_EMCMaximumBandwidth               int         `json:"i$EMCMaximumBandwidth"`
-            I_EMCMaximumIO                      int         `json:"i$EMCMaximumIO"`
-            I_EMCMaxIOBandwidthInherited        bool        `json:"i$EMCMaxIOBandwidthInherited"`
-            I_EMCMaxIODynamicDistributionType   int         `json:"i$EMCMaxIODynamicDistributionType"`
-            I_EMCRecoverPointEnabled            bool        `json:"i$EMCRecoverPointEnabled"`
-            I_EMCSLO                            string      `json:"i$EMCSLO"`
-            I_EMCSLOBaseName                    string      `json:"i$EMCSLOBaseName"`
-            I_EMCSRP                            string      `json:"i$EMCSRP"`
-            I_Generation                        int         `json:"i$Generation"` 
-            I_InstanceID                        string      `json:"i$InstanceID"`                      
-            Links []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type    string      `json:"content-type"`
-        Gd_etag         string      `json:"gd$etag"`
-        Links           []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated         string      `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			_type                             string      `json:"@type"`
+			I_Caption                         string      `json:"i$Caption"`
+			I_DeleteOnEmpty                   bool        `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated   bool        `json:"i$DeleteWhenBecomesUnassociated"`
+			I_EMCAssociatedToView             bool        `json:"i$EMCAssociatedToView"`
+			I_EMCFastSetting                  string      `json:"i$EMCFastSetting"`
+			I_EMCMaxIOBandwidthInherited      bool        `json:"i$EMCMaxIOBandwidthInherited"`
+			I_EMCMaxIODynamicDistributionType int         `json:"i$EMCMaxIODynamicDistributionType"`
+			I_EMCMaximumBandwidth             int         `json:"i$EMCMaximumBandwidth"`
+			I_EMCMaximumIO                    int         `json:"i$EMCMaximumIO"`
+			I_EMCRecoverPointEnabled          bool        `json:"i$EMCRecoverPointEnabled"`
+			I_EMCSLO                          string      `json:"i$EMCSLO"`
+			I_EMCSLOBaseName                  string      `json:"i$EMCSLOBaseName"`
+			I_EMCSRP                          string      `json:"i$EMCSRP"`
+			I_EMCWorkload                     interface{} `json:"i$EMCWorkload"`
+			I_ElementName                     string      `json:"i$ElementName"`
+			I_Generation                      int         `json:"i$Generation"`
+			I_InstanceID                      string      `json:"i$InstanceID"`
+			Links                             []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
+
+
 
 //Get a list of Device Masking/Storage Groups associated with SymmID 
 func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err error){
@@ -168,82 +171,83 @@ func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err 
     return resp,err
 }
 
-
 type GetPortGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            _type                               string      `json:"@type"`
-            I_Caption                           string      `json:"i$Caption"`
-            I_DeleteOnEmpty                     bool        `json:"i$DeleteOnEmpty"`   
-            I_DeleteWhenBecomesUnassociated     bool        `json:"i$DeleteWhenBecomesUnassociated"`
-            I_ElementName                       string      `json:"i$ElementName"`
-            I_Generation                        int         `json:"i$Generation"` 
-            I_InstanceID                        string      `json:"i$InstanceID"`                      
-            Links []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type    string      `json:"content-type"`
-        Gd_etag         string      `json:"gd$etag"`
-        Links           []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated         string      `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			_type                           string `json:"@type"`
+			I_Caption                       string `json:"i$Caption"`
+			I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
+			I_ElementName                   string `json:"i$ElementName"`
+			I_Generation                    int    `json:"i$Generation"`
+			I_InstanceID                    string `json:"i$InstanceID"`
+			Links                           []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
+
 //Get a list of Target/Port Groups associated with SymmID 
-func (smis *SMIS) GetPortGroups(sid string) (resp *GetStorageGroupsResp, err error){
+func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error){
     err = smis.query("GET","/ecom/edaa/root/emc/types/SE_TargetMaskingGroup/instances", nil, &resp)
     return resp,err
 }
 
-type GetInitiatorGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            _type                               string      `json:"@type"`
-            I_Caption                           string      `json:"i$Caption"`
-            I_ConsistentLogicalUnitNumber       bool        `json:"i$ConsistentLogicalUnitNumber"`
-            I_DeleteOnEmpty                     bool        `json:"i$DeleteOnEmpty"`   
-            I_DeleteWhenBecomesUnassociated     bool        `json:"i$DeleteWhenBecomesUnassociated"`
-            I_ElementName                       string      `json:"i$ElementName"`
-            I_Generation                        int         `json:"i$Generation"` 
-            I_InstanceID                        string      `json:"i$InstanceID"`                      
-            Links []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type    string      `json:"content-type"`
-        Gd_etag         string      `json:"gd$etag"`
-        Links           []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated         string      `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+type GetHostGroupsResp struct {
+	Entries []struct {
+		Content struct {
+			_type                           string `json:"@type"`
+			I_Caption                       string `json:"i$Caption"`
+			I_ConsistentLogicalUnitNumber   bool   `json:"i$ConsistentLogicalUnitNumber"`
+			I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
+			I_ElementName                   string `json:"i$ElementName"`
+			I_Generation                    int    `json:"i$Generation"`
+			I_InstanceID                    string `json:"i$InstanceID"`
+			Links                           []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
+
 //Get a list of Initiator Groups associated with SymmID 
-func (smis *SMIS) GetInitiatorGroups(sid string) (resp *GetInitiatorGroupsResp, err error){
+func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error){
     err = smis.query("GET","/ecom/edaa/root/emc/types/SE_InitiatorMaskingGroup/instances", nil, &resp)
     return resp,err
 }

@@ -23,7 +23,7 @@ func init() {
 	}
 }
 
-/*
+
 func TestGetStoragePools(*testing.T) {
 
 	pools, err := smis.GetStoragePools("000196701380")
@@ -73,11 +73,11 @@ func TestPortGroups(*testing.T) {
 	}
 
 	fmt.Println(fmt.Sprintf("%+v", vols))
-}*/
+}
 
 func TestInitiatorGroups(*testing.T) {
 
-	vols, err := smis.GetInitiatorGroups("000196701380")
+	vols, err := smis.GetHostGroups("000196701380")
 	if err != nil {
 		panic(err)
 	}

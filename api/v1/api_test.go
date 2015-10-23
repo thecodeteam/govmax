@@ -23,6 +23,7 @@ func init() {
 	}
 }
 
+/*
 func TestGetStoragePools(*testing.T) {
 
 	pools, err := smis.GetStoragePools("000196701380")
@@ -42,3 +43,47 @@ func TestGetDeviceMaskingViews(*testing.T) {
 
 	fmt.Println(fmt.Sprintf("%+v", views))
 }
+
+
+func TestGetStorageGroups(*testing.T) {
+
+	groups, err := smis.GetStorageGroups("000196701380")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", groups))
+}
+
+func TestGetStorageVolumes(*testing.T) {
+
+	vols, err := smis.GetStorageVolumes("000196701380")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", vols))
+}
+
+func TestPortGroups(*testing.T) {
+
+	vols, err := smis.GetPortGroups("000196701380")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", vols))
+}*/
+
+func TestInitiatorGroups(*testing.T) {
+
+	vols, err := smis.GetInitiatorGroups("000196701380")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", vols))
+}
+
+
+

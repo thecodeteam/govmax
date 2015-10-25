@@ -257,7 +257,7 @@ type GetStorageGroupsResp struct {
 
 //Get a list of Device Masking/Storage Groups associated with SymmID 
 func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/types/SE_DeviceMaskingGroup/instances", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_DeviceMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -297,7 +297,7 @@ type GetPortGroupsResp struct {
 
 //Get a list of Target/Port Groups associated with SymmID 
 func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/types/SE_TargetMaskingGroup/instances", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_TargetMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -335,10 +335,9 @@ type GetHostGroupsResp struct {
 	Xmlns_gd string `json:"xmlns$gd"`
 }
 
-
 //Get a list of Initiator Groups associated with SymmID 
 func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/types/SE_InitiatorMaskingGroup/instances", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_InitiatorMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -435,6 +434,7 @@ func (smis *SMIS) GetStorageVolumes(sid string) (resp *GetStorageVolumesResp, er
     err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
     return resp,err
 }
+
 
 /*
 type PostMaskingGroupsReq struct {

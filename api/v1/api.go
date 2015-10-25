@@ -2,6 +2,96 @@ package apiv1
 
 import ()
 
+func (smis *SMIS) GetStorageArray(sid string) (resp *GetStoragePoolsResp, err error){
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::" + sid + "/relationships/Symm_SRPStoragePool", nil, &resp)
+    return resp,err
+}
+
+type GetStorageArraysResp struct {
+	Entries []struct {
+		Content struct {
+			_type                          string      `json:"@type"`
+			I_Caption                      string      `json:"i$Caption"`
+			I_CreationClassName            string      `json:"i$CreationClassName"`
+			I_Dedicated                    []int       `json:"i$Dedicated"`
+			I_Description                  string      `json:"i$Description"`
+			I_EMCAutoMetaConfiguration     []int       `json:"i$EMCAutoMetaConfiguration"`
+			I_EMCAutoMetaEnabled           bool        `json:"i$EMCAutoMetaEnabled"`
+			I_EMCAutoMetaMemberSize        int         `json:"i$EMCAutoMetaMemberSize"`
+			I_EMCAutoMetaMinSize           int         `json:"i$EMCAutoMetaMinSize"`
+			I_EMCBSPElementType            int         `json:"i$EMCBSPElementType"`
+			I_EMCBSPInstanceID             string      `json:"i$EMCBSPInstanceID"`
+			I_EMCCacheHiWatermark          int         `json:"i$EMCCacheHiWatermark"`
+			I_EMCCacheLoWatermark          int         `json:"i$EMCCacheLoWatermark"`
+			I_EMCEnclosureCount            int         `json:"i$EMCEnclosureCount"`
+			I_EMCLastSyncTime              string      `json:"i$EMCLastSyncTime"`
+			I_EMCLastSyncType              []int       `json:"i$EMCLastSyncType"`
+			I_EMCLastSyncTypeDesc          []string    `json:"i$EMCLastSyncTypeDesc"`
+			I_EMCLicenseActivationType     []int       `json:"i$EMCLicenseActivationType"`
+			I_EMCLicenseCapacityType       []int       `json:"i$EMCLicenseCapacityType"`
+			I_EMCLicenseConversionFactor   []int       `json:"i$EMCLicenseConversionFactor"`
+			I_EMCLicenseExpirationDate     []string    `json:"i$EMCLicenseExpirationDate"`
+			I_EMCLicenseFeatureName        []string    `json:"i$EMCLicenseFeatureName"`
+			I_EMCLicenseStatus             []int       `json:"i$EMCLicenseStatus"`
+			I_EMCLocality                  int         `json:"i$EMCLocality"`
+			I_EMCMaskingEnabled            bool        `json:"i$EMCMaskingEnabled"`
+			I_EMCMemorySize                int         `json:"i$EMCMemorySize"`
+			I_EMCNonSataActualCapacity     []int       `json:"i$EMCNonSataActualCapacity"`
+			I_EMCNonSataLicenseCapacity    []int       `json:"i$EMCNonSataLicenseCapacity"`
+			I_EMCNumberOfDisks             int         `json:"i$EMCNumberOfDisks"`
+			I_EMCNumberOfUnconfiguredDisks int         `json:"i$EMCNumberOfUnconfiguredDisks"`
+			I_EMCNumberofFrontEndPorts     int         `json:"i$EMCNumberofFrontEndPorts"`
+			I_EMCNumberofSymDevs           int         `json:"i$EMCNumberofSymDevs"`
+			I_EMCReadCacheSize             int         `json:"i$EMCReadCacheSize"`
+			I_EMCSataActualCapacity        []int       `json:"i$EMCSataActualCapacity"`
+			I_EMCSataLicenseCapacity       []int       `json:"i$EMCSataLicenseCapacity"`
+			I_EMCUpTime                    string      `json:"i$EMCUpTime"`
+			I_EMCWriteCacheSize            int         `json:"i$EMCWriteCacheSize"`
+			I_EMCisDARE                    bool        `json:"i$EMCisDARE"`
+			I_ElementName                  string      `json:"i$ElementName"`
+			I_EnabledDefault               int         `json:"i$EnabledDefault"`
+			I_EnabledState                 int         `json:"i$EnabledState"`
+			I_HealthState                  int         `json:"i$HealthState"`
+			I_IdentifyingDescriptions      []string    `json:"i$IdentifyingDescriptions"`
+			I_Name                         string      `json:"i$Name"`
+			I_NameFormat                   string      `json:"i$NameFormat"`
+			I_OperationalStatus            []int       `json:"i$OperationalStatus"`
+			I_OtherIdentifyingInfo         []string    `json:"i$OtherIdentifyingInfo"`
+			I_PowerManagementCapabilities  []int       `json:"i$PowerManagementCapabilities"`
+			I_PrimaryOwnerContact          interface{} `json:"i$PrimaryOwnerContact"`
+			I_PrimaryOwnerName             interface{} `json:"i$PrimaryOwnerName"`
+			I_RequestedState               int         `json:"i$RequestedState"`
+			I_ResetCapability              int         `json:"i$ResetCapability"`
+			I_StatusDescriptions           []string    `json:"i$StatusDescriptions"`
+			I_TransitioningToState         int         `json:"i$TransitioningToState"`
+			Links                          []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
+}
+
+func (smis *SMIS) GetStorageArrays() (resp *GetStorageArraysResp, err error){
+    err = smis.query("GET","/ecom/edaa/root/emc/types/Symm_StorageSystem/instances", nil, &resp)
+    return resp,err
+}
+
 type GetStoragePoolsResp  struct {
     Entries []struct {
         Content struct {

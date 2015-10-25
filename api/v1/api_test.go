@@ -9,6 +9,9 @@ import (
 
 var smis *SMIS
 
+
+var testingSID string
+
 func init() {
 	host := os.Getenv("GOVMAX_SMISHOST")
 	port := os.Getenv("GOVMAX_SMISPORT")
@@ -23,10 +26,21 @@ func init() {
 	}
 }
 
+func TestGetStorageArrays(*testing.T) {
+
+	arrays, err := smis.GetStorageArrays()
+	//Setup array name for rest of tests
+	testingSID = arrays.Entries[0].Content.I_ElementName
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v",arrays))
+}
 
 func TestGetStoragePools(*testing.T) {
 
-	pools, err := smis.GetStoragePools("000196701380")
+	pools, err := smis.GetStoragePools(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +50,7 @@ func TestGetStoragePools(*testing.T) {
 
 func TestGetDeviceMaskingViews(*testing.T) {
 
-	views, err := smis.GetDeviceMaskingViews("000196701380")
+	views, err := smis.GetDeviceMaskingViews(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +61,7 @@ func TestGetDeviceMaskingViews(*testing.T) {
 
 func TestGetStorageGroups(*testing.T) {
 
-	groups, err := smis.GetStorageGroups("000196701380")
+	groups, err := smis.GetStorageGroups(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +71,7 @@ func TestGetStorageGroups(*testing.T) {
 
 func TestGetStorageVolumes(*testing.T) {
 
-	vols, err := smis.GetStorageVolumes("000196701380")
+	vols, err := smis.GetStorageVolumes(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +81,7 @@ func TestGetStorageVolumes(*testing.T) {
 
 func TestPortGroups(*testing.T) {
 
-	vols, err := smis.GetPortGroups("000196701380")
+	vols, err := smis.GetPortGroups(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +91,7 @@ func TestPortGroups(*testing.T) {
 
 func TestInitiatorGroups(*testing.T) {
 
-	vols, err := smis.GetHostGroups("000196701380")
+	vols, err := smis.GetHostGroups(testingSID)
 	if err != nil {
 		panic(err)
 	}

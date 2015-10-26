@@ -51,14 +51,13 @@ func TestGetStoragePools(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", pools))
 }
 
-func TestGetDeviceMaskingViews(*testing.T) {
+func TestGetMaskingViews(*testing.T) {
+        maskingViews, err := smis.GetMaskingViews(testingSID)
+        if err != nil {
+                panic(err)
+        }
 
-	views, err := smis.GetDeviceMaskingViews(testingSID)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(fmt.Sprintf("%+v", views))
+        fmt.Println(fmt.Sprintf("%+v",maskingViews))
 }
 
 
@@ -72,9 +71,9 @@ func TestGetStorageGroups(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", groups))
 }
 
-func TestGetStorageVolumes(*testing.T) {
+func TestGetVolumes(*testing.T) {
 
-	vols, err := smis.GetStorageVolumes(testingSID)
+	vols, err := smis.GetVolumes(testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -114,10 +113,6 @@ func TestPostVolumes(*testing.T) {
 			Size : "123",
 		},
 	}
-<<<<<<< HEAD
-=======
-	fmt.Println(fmt.Sprintf("%+v",PostVolRequest))
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff
 	queuedJob, err := smis.PostVolumes(PostVolRequest,testingSID)
 	if err != nil {
 		panic(err)
@@ -126,7 +121,6 @@ func TestPostVolumes(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v",queuedJob))
 }
 
-<<<<<<< HEAD
 func TestPostCreateGroup(*testing.T) {
 	curTime := time.Now()
 	PostGroupRequest := &PostGroupReq{
@@ -137,7 +131,12 @@ func TestPostCreateGroup(*testing.T) {
 		},
 	}
 	storageGroup, err := smis.PostCreateGroup(PostGroupRequest,testingSID)
-=======
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", storageGroup))
+}
+
 /*
 func TestPostMaskingGroups(*testing.T) {
 
@@ -146,21 +145,13 @@ func TestPostMaskingGroups(*testing.T) {
 			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
 			GroupName : "test_hg3",
 			Type : 2,
-			//Type 2 (HG), Type 3 (PG), Type 4 (SG)
  		},
 	}
-	//fmt.Println(fmt.Sprintf("%+v",PostGroupsRequest))
 	queuedJob1, err := smis.PostMaskingGroups(PostGroupsRequest,testingSID)
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff
 	if err != nil {
 		panic(err)
 	}
 
-<<<<<<< HEAD
-	fmt.Println(fmt.Sprintf("%+v",storageGroup))
-}
-=======
-	fmt.Println(fmt.Sprintf("%+v",queuedJob1))
 }
 
 
@@ -175,5 +166,3 @@ func TestSLOs(*testing.T) {
 }
 */
 
-
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff

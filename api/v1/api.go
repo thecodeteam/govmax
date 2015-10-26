@@ -252,7 +252,7 @@ type GetStorageGroupsResp struct {
 
 //Get a list of Device Masking/Storage Groups associated with SymmID 
 func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_DeviceMaskingGroup", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_DeviceMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -292,7 +292,7 @@ type GetPortGroupsResp struct {
 
 //Get a list of Target/Port Groups associated with SymmID 
 func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_TargetMaskingGroup", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_TargetMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -332,7 +332,7 @@ type GetHostGroupsResp struct {
 
 //Get a list of Initiator Groups associated with SymmID 
 func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-%2b-" + sid + "/relationships/SE_InitiatorMaskingGroup", nil, &resp)
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_InitiatorMaskingGroup", nil, &resp)
     return resp,err
 }
 
@@ -464,7 +464,7 @@ func (smis *SMIS) PostMaskingGroupsReq (req *PostMaskingGroupsReq, sid string) (
 */
 
 type PostVolumesReq struct {
-	PostVolumesReqContent `json:"content"`
+	PostVolumesRequestContent PostVolumesReqContent `json:"content"`
 }
 
 type PostVolumesReqContent struct {
@@ -512,6 +512,75 @@ func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolume
     return resp,err
 }
 
+//////////////////////////////////////
+//   REQUEST Structs used for any   //
+//   group creation on the VMAX3.   //
+//  				    //
+//    Storage Group (SG) - Type 4   //
+//     Port Group (PG) - Type 3     //
+//   Initiator Group (IG) - Type 2  //
+//////////////////////////////////////
+
+type PostGroupReq struct {
+        PostGroupRequestContent PostGroupReqContent `json:"content"`
+}
+
+type PostGroupReqContent struct {
+        AtType           string `json:"@type"`
+        SG_Name		 string `json:"GroupName"`
+        Type             string `json:"Type"`
+}
+
+////////////////////////////////////////////////////////////
+//           RESPONSE Structs used for any                //
+//           group creation on the VMAX3.                 //
+//                                                        //
+//   Storage Group (SG) - Type SE_DeviceMaskingGroup      //
+//      Port Group (PG) - Type SE_TargetMaskingGroup      //
+//  Initiator Group (IG) - Type SE_InitiatorMaskingGroup  //
+////////////////////////////////////////////////////////////
+
+
+type PostGroupResp struct {
+	Entries []struct {
+		Content struct {
+			_type        string `json:"@type"`
+			I_parameters struct {
+				I_MaskingGroup struct {
+					_type         string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$MaskingGroup"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
+}
+
+
+///////////////////////////////////////////////////////////////
+//                  Create an Array Group                    //
+// Type Depends on Type field specified in requesting struct //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGroupResp, err error){
+	err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/action/CreateGroup", req, &resp)
+	return resp, err
+}
 
 /*
 type PostVolumesToSG struct {

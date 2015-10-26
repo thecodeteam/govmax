@@ -36,6 +36,57 @@ func New(host string, port string, insecure bool, username string, password stri
 	return &SMIS{host, port, insecure, username, password, client}, nil
 }
 
+/////////////////////////////////////////////////
+// Parses URL into properly encoded URL format //
+/////////////////////////////////////////////////
+
+func parseURL(URL string) (string){
+
+	var newURL string
+
+	for _, char := range URL {
+		switch {
+		case char == ' ':
+			newURL = newURL + "%20"
+		case char == '!':
+			newURL = newURL + "%21"
+		case char == '"':
+			newURL = newURL + "%22"
+		case char == '#':
+			newURL = newURL + "%23"
+		case char == '$':
+			newURL = newURL + "%24"
+		case char == '%':
+			newURL = newURL + "%25"
+		case char == '&':
+			newURL = newURL + "%26"
+		case char == '\'':
+			newURL = newURL + "%27"
+		case char == '(':
+			newURL = newURL + "%28"
+		case char == ')':
+			newURL = newURL + "%29"
+		case char == '*':
+			newURL = newURL + "%2A"
+		case char == '+':
+			newURL = newURL + "%2B"
+		case char == ',':
+			newURL = newURL + "%2C"
+		case char == '-':
+			newURL = newURL + "%2D"
+		case char == '.':
+			newURL = newURL + "%2E"
+		case char == ':':
+			newURL = newURL + "%3A"
+		case char == ';':
+			newURL = newURL + "%3B"
+		default:
+			newURL = newURL + string(char)
+		}
+	}
+
+	return newURL
+}
 func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) error {
 
 	///////////////////////////////////////////
@@ -43,6 +94,7 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	///////////////////////////////////////////
 
 	var URL string
+	objectPath = parseURL(objectPath)
 
 	if smis.insecure {
 		URL = "http://" + smis.host + ":" + smis.port + objectPath

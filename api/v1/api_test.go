@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 )
 
 var smis *SMIS
@@ -103,14 +104,13 @@ func TestInitiatorGroups(*testing.T) {
 func TestPostVolumes(*testing.T) {
 
 	PostVolRequest := &PostVolumesReq{
-	PostVolumesReqContent : PostVolumesReqContent{
+		PostVolumesRequestContent : PostVolumesReqContent{
 			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageConfigurationService",
 			EMCNumberOfDevices : "1",
 			ElementType : "2",
 			Size : "123",
 		},
 	}
-	//fmt.Println(fmt.Sprintf("%+v",PostVolRequest))
 	queuedJob, err := smis.PostVolumes(PostVolRequest,testingSID)
 	if err != nil {
 		panic(err)
@@ -119,3 +119,19 @@ func TestPostVolumes(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v",queuedJob))
 }
 
+func TestPostCreateGroup(*testing.T) {
+	curTime := time.Now()
+	PostGroupRequest := &PostGroupReq{
+		PostGroupRequestContent : PostGroupReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
+			SG_Name : "TestingSG_" + curTime.Format("Jan-2-2006--15-04-05"),
+			Type : "4",
+		},
+	}
+	storageGroup, err := smis.PostCreateGroup(PostGroupRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v",storageGroup))
+}

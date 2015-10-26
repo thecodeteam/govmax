@@ -429,21 +429,7 @@ func (smis *SMIS) GetVolumes(sid string) (resp *GetVolumesResp, err error){
     err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
     return resp,err
 }
-/*
-type PostMaskingGroupsReq struct {
-    PostMaskingGroupsReqContent `json:"content"`
-}
-
-type PostMaskingGroupsReqContent struct {
-    //@type = http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService
-    AtType      string      `json: "@type"`
-    GroupName   string      `json: "GroupName"`
-    Type        int         `json: "Type"` 
-    //Type 2 = Initiator/Host Masking Group
-    //Type 3 = Target/Port Masking Group
-    //Type 4 = Device Masking/Storage Group         
-}
-
+/* this does not work!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 type PostMaskingGroupsResp struct {
     Entries []struct {
         Content struct {
@@ -479,7 +465,6 @@ func (smis *SMIS) PostMaskingGroups (req *PostMaskingGroupsReq, sid string) (res
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateGroup", req, &resp)
     return resp,err
 }
-
 */
 type PostVolumesReq struct {
 	PostVolumesRequestContent PostVolumesReqContent `json:"content"`
@@ -546,7 +531,7 @@ type PostGroupReq struct {
 
 type PostGroupReqContent struct {
         AtType           string `json:"@type"`
-        SG_Name		 string `json:"GroupName"`
+        SG_Name		     string `json:"GroupName"`
         Type             string `json:"Type"`
 }
 

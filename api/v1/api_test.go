@@ -148,13 +148,17 @@ func TestPostMaskingGroups(*testing.T) {
  		},
 	}
 	queuedJob1, err := smis.PostMaskingGroups(PostGroupsRequest,testingSID)
+
 	if err != nil {
 		panic(err)
 	}
 
 }
 
+	fmt.Println(fmt.Sprintf("%+v",storageGroup))
+}
 
+/*
 func TestSLOs(*testing.T) {
 
     groups, err := smis.GetSLOs("SRP_1", "000196701380")

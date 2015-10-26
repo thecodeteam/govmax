@@ -137,36 +137,27 @@ func TestPostCreateGroup(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", storageGroup))
 }
 
-/*
-func TestPostMaskingGroups(*testing.T) {
-
-	PostGroupsRequest := &PostMaskingGroupsReq{
-	PostMaskingGroupsReqContent : PostMaskingGroupsReqContent{
-			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
-			GroupName : "test_hg3",
-			Type : 2,
- 		},
-	}
-	queuedJob1, err := smis.PostMaskingGroups(PostGroupsRequest,testingSID)
-
+func TestGetStoragePoolSettings(*testing.T) {
+	storagePools, err := smis.GetStoragePools(testingSID)
 	if err != nil {
 		panic(err)
 	}
 
+	storagePoolSettings, err := smis.GetStoragePoolSettings(storagePools.Entries[0].Content.I_ElementName,testingSID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", storagePoolSettings))
 }
 
-	fmt.Println(fmt.Sprintf("%+v",storageGroup))
-}
+func TestGetSLOs(*testing.T) {
 
-/*
-func TestSLOs(*testing.T) {
-
-    groups, err := smis.GetSLOs("SRP_1", "000196701380")
+    SLOs, err := smis.GetSLOs(testingSID)
     if err != nil {
         panic(err)
     }
 
-    fmt.Println(fmt.Sprintf("%+v", groups))
+    fmt.Printf("%+v", SLOs)
 }
-*/
+
 

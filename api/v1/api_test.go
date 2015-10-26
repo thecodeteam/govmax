@@ -100,4 +100,22 @@ func TestInitiatorGroups(*testing.T) {
 }
 
 
+func TestPostVolumes(*testing.T) {
+
+	PostVolRequest := &PostVolumesReq{
+	PostVolumesReqContent : PostVolumesReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageConfigurationService",
+			EMCNumberOfDevices : "1",
+			ElementType : "2",
+			Size : "123",
+		},
+	}
+	//fmt.Println(fmt.Sprintf("%+v",PostVolRequest))
+	queuedJob, err := smis.PostVolumes(PostVolRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v",queuedJob))
+}
 

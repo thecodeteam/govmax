@@ -2,11 +2,6 @@ package apiv1
 
 import ()
 
-func (smis *SMIS) GetStorageArray(sid string) (resp *GetStoragePoolsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::" + sid + "/relationships/Symm_SRPStoragePool", nil, &resp)
-    return resp,err
-}
-
 type GetStorageArraysResp struct {
 	Entries []struct {
 		Content struct {
@@ -466,30 +461,50 @@ func (smis *SMIS) PostMaskingGroupsReq (req *PostMaskingGroupsReq, sid string) (
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateGroup", req, &resp)
     return resp,err
 }
+*/
 
 type PostVolumesReq struct {
-    Content []struct {
-        //@type = http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageConfigurationService
-        //Add goal stuct later {@type, InstanceID}
-        _type               string      `json: "@type"`
-        ElementName         string      `json: "ElementName"`
-        ElementType         string      `json: "ElementType"`
-        EMCNumberOfDevices  string      `json: "EMCNumberOfDevices"`
-        Size                string      `json: "Size"`
-    } `json:"content"`
+	PostVolumesReqContent `json:"content"`
+}
 
+type PostVolumesReqContent struct {
+	AtType			string `json:"@type"`
+	EMCNumberOfDevices	string `json:"EMCNumberOfDevices"`
+	ElementType		string `json:"ElementType"`
+	Size			string `json:"Size"`
 }
+
 type PostVolumesResp struct {
-    Entries []struct {
-        Content []struct {
-            I_Parameters []struct {
-                I_Job []struct {
-                    I_InstanceID string `json: "e0$InstanceID"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-        } `json:"content"`
-    } `json:"entries"`
+	Entries []struct {
+		Content struct {
+			_type        string `json:"@type"`
+			I_parameters struct {
+				I_Job struct {
+					_type         string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+				I_Size int `json:"i$Size"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
+
 
 //Create a Storage Volume
 func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolumesResp, err error){
@@ -497,6 +512,8 @@ func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolume
     return resp,err
 }
 
+
+/*
 type PostVolumesToSG struct {
     Content []struct {
         MaskingGroup [] struct {

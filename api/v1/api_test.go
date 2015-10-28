@@ -73,7 +73,7 @@ func TestGetStorageGroups(*testing.T) {
 
 func TestGetVolumes(*testing.T) {
 
-	vols, err := smis.GetVolumes(testingSID)
+	vols, err := smis.GetStorageVolumes(testingSID)
 	if err != nil {
 		panic(err)
 	}

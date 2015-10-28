@@ -114,10 +114,8 @@ func TestPostVolumes(*testing.T) {
 			Size : "123",
 		},
 	}
-<<<<<<< HEAD
-=======
-	fmt.Println(fmt.Sprintf("%+v",PostVolRequest))
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff
+	//fmt.Println(fmt.Sprintf("%+v",PostVolRequest))
+
 	queuedJob, err := smis.PostVolumes(PostVolRequest,testingSID)
 	if err != nil {
 		panic(err)
@@ -126,7 +124,7 @@ func TestPostVolumes(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v",queuedJob))
 }
 
-<<<<<<< HEAD
+
 func TestPostCreateGroup(*testing.T) {
 	curTime := time.Now()
 	PostGroupRequest := &PostGroupReq{
@@ -137,33 +135,15 @@ func TestPostCreateGroup(*testing.T) {
 		},
 	}
 	storageGroup, err := smis.PostCreateGroup(PostGroupRequest,testingSID)
-=======
-/*
-func TestPostMaskingGroups(*testing.T) {
 
-	PostGroupsRequest := &PostMaskingGroupsReq{
-	PostMaskingGroupsReqContent : PostMaskingGroupsReqContent{
-			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
-			GroupName : "test_hg3",
-			Type : 2,
-			//Type 2 (HG), Type 3 (PG), Type 4 (SG)
- 		},
-	}
-	//fmt.Println(fmt.Sprintf("%+v",PostGroupsRequest))
-	queuedJob1, err := smis.PostMaskingGroups(PostGroupsRequest,testingSID)
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff
 	if err != nil {
 		panic(err)
 	}
 
-<<<<<<< HEAD
 	fmt.Println(fmt.Sprintf("%+v",storageGroup))
 }
-=======
-	fmt.Println(fmt.Sprintf("%+v",queuedJob1))
-}
 
-
+/*
 func TestSLOs(*testing.T) {
 
     groups, err := smis.GetSLOs("SRP_1", "000196701380")
@@ -175,5 +155,3 @@ func TestSLOs(*testing.T) {
 }
 */
 
-
->>>>>>> 6d6a22e09a95b7548436c328b6fcb95c3f684bff

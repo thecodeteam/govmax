@@ -429,57 +429,7 @@ func (smis *SMIS) GetStorageVolumes(sid string) (resp *GetStorageVolumesResp, er
     err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
     return resp,err
 }
-/*
-type PostMaskingGroupsReq struct {
-    PostMaskingGroupsReqContent `json:"content"`
-}
 
-type PostMaskingGroupsReqContent struct {
-    //@type = http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService
-    AtType      string      `json: "@type"`
-    GroupName   string      `json: "GroupName"`
-    Type        int         `json: "Type"` 
-    //Type 2 = Initiator/Host Masking Group
-    //Type 3 = Target/Port Masking Group
-    //Type 4 = Device Masking/Storage Group         
-}
-
-type PostMaskingGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_MaskingGroup struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$MaskingGroup"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
-}
-*/
-
-//Create a Masking Group (Same method call for Initator, Target/Port, and Device/Storage)
-func (smis *SMIS) PostMaskingGroups (req *PostMaskingGroupsReq, sid string) (resp *PostMaskingGroupsResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateGroup", req, &resp)
-    return resp,err
-}
 
 type PostVolumesReq struct {
 	PostVolumesRequestContent PostVolumesReqContent `json:"content"`
@@ -546,7 +496,7 @@ type PostGroupReq struct {
 
 type PostGroupReqContent struct {
         AtType           string `json:"@type"`
-        SG_Name		 string `json:"GroupName"`
+        SG_Name		     string `json:"GroupName"`
         Type             string `json:"Type"`
 }
 

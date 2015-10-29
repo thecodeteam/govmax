@@ -620,74 +620,74 @@ func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGrou
 ////////////////////////////////////////////////////////////
 
 type GetStoragePoolSettingsResp struct {
-	Entries []struct {
-		Content struct {
-			_type                            string `json:"@type"`
-			I_Changeable                     bool   `json:"i$Changeable"`
-			I_ChangeableType                 int    `json:"i$ChangeableType"`
-			I_CompressedElement              bool   `json:"i$CompressedElement"`
-			I_CompressionRate                int    `json:"i$CompressionRate"`
-			I_DataRedundancyGoal             int    `json:"i$DataRedundancyGoal"`
-			I_DataRedundancyMax              int    `json:"i$DataRedundancyMax"`
-			I_DataRedundancyMin              int    `json:"i$DataRedundancyMin"`
-			I_DeltaReservationGoal           int    `json:"i$DeltaReservationGoal"`
-			I_DeltaReservationMax            int    `json:"i$DeltaReservationMax"`
-			I_DeltaReservationMin            int    `json:"i$DeltaReservationMin"`
-			I_ElementName			 string `json:"i$ElementName"`
-			I_EMCApproxAverageResponseTime   float64 `json:"i$EMCApproxAverageResponseTime"`
-			I_EMCDeduplicationRate           int    `json:"i$EMCDeduplicationRate"`
-			I_EMCEnableDIF                   int    `json:"i$EMCEnableDIF"`
-			I_EMCEnableEFDCache              int    `json:"i$EMCEnableEFDCache"`
-			I_EMCFastSetting                 string `json:"i$EMCFastSetting"`
-			I_EMCParticipateInPowerSavings   int    `json:"i$EMCParticipateInPowerSavings"`
-			I_EMCPoolCompressionState        int    `json:"i$EMCPoolCompressionState"`
-			I_EMCPottedSetting               bool   `json:"i$EMCPottedSetting"`
-			I_EMCRaidGroupLUN                bool   `json:"i$EMCRaidGroupLUN"`
-			I_EMCRaidLevel                   string `json:"i$EMCRaidLevel"`
-			I_EMCSLO                         string `json:"i$EMCSLO"`
-			I_EMCSLOBaseName                 string `json:"i$EMCSLOBaseName"`
-			I_EMCSLOdescription              string `json:"i$EMCSLOdescription"`
-			I_EMCSRP                         string `json:"i$EMCSRP"`
-			I_EMCStorageSettingType          int    `json:"i$EMCStorageSettingType"`
-			I_EMCUniqueID                    string `json:"i$EMCUniqueID"`
-			I_EMCWorkload                    string `json:"i$EMCWorkload"`
-			I_ExtentStripeLength             int    `json:"i$ExtentStripeLength"`
-			I_ExtentStripeLengthMax          int    `json:"i$ExtentStripeLengthMax"`
-			I_ExtentStripeLengthMin          int    `json:"i$ExtentStripeLengthMin"`
-			I_InitialStorageTierMethodology  int    `json:"i$InitialStorageTierMethodology"`
-			I_InitialStorageTieringSelection int    `json:"i$InitialStorageTieringSelection"`
-			I_InitialSynchronization         int    `json:"i$InitialSynchronization"`
-			I_InstanceID                     string `json:"i$InstanceID"`
-			I_NoSinglePointOfFailure         bool   `json:"i$NoSinglePointOfFailure"`
-			I_PackageRedundancyGoal          int    `json:"i$PackageRedundancyGoal"`
-			I_PackageRedundancyMax           int    `json:"i$PackageRedundancyMax"`
-			I_PackageRedundancyMin           int    `json:"i$PackageRedundancyMin"`
-			I_SpaceLimit                     int    `json:"i$SpaceLimit"`
-			I_StorageExtentInitialUsage      int    `json:"i$StorageExtentInitialUsage"`
-			I_StoragePoolInitialUsage        int    `json:"i$StoragePoolInitialUsage"`
-			I_ThinProvisionedPoolType        int    `json:"i$ThinProvisionedPoolType"`
-			I_UseReplicationBuffer           int    `json:"i$UseReplicationBuffer"`
-			Links                            []struct {
-				Href string `json:"href"`
-				Rel  string `json:"rel"`
-			} `json:"links"`
-			Xmlns_i string `json:"xmlns$i"`
-		} `json:"content"`
-		Content_type string `json:"content-type"`
-		Gd_etag      string `json:"gd$etag"`
-		Links        []struct {
-			Href string `json:"href"`
-			Rel  string `json:"rel"`
-		} `json:"links"`
-		Updated string `json:"updated"`
-	} `json:"entries"`
-	ID    string `json:"id"`
-	Links []struct {
-		Href string `json:"href"`
-		Rel  string `json:"rel"`
-	} `json:"links"`
-	Updated  string `json:"updated"`
-	Xmlns_gd string `json:"xmlns$gd"`
+    Entries []struct {
+        Content struct {
+            _type                            string `json:"@type"`
+            I_Changeable                     bool   `json:"i$Changeable"`
+            I_ChangeableType                 int    `json:"i$ChangeableType"`
+            I_CompressedElement              bool   `json:"i$CompressedElement"`
+            I_CompressionRate                int    `json:"i$CompressionRate"`
+            I_DataRedundancyGoal             int    `json:"i$DataRedundancyGoal"`
+            I_DataRedundancyMax              int    `json:"i$DataRedundancyMax"`
+            I_DataRedundancyMin              int    `json:"i$DataRedundancyMin"`
+            I_DeltaReservationGoal           int    `json:"i$DeltaReservationGoal"`
+            I_DeltaReservationMax            int    `json:"i$DeltaReservationMax"`
+            I_DeltaReservationMin            int    `json:"i$DeltaReservationMin"`
+            I_ElementName            string `json:"i$ElementName"`
+            I_EMCApproxAverageResponseTime   float64 `json:"i$EMCApproxAverageResponseTime"`
+            I_EMCDeduplicationRate           int    `json:"i$EMCDeduplicationRate"`
+            I_EMCEnableDIF                   int    `json:"i$EMCEnableDIF"`
+            I_EMCEnableEFDCache              int    `json:"i$EMCEnableEFDCache"`
+            I_EMCFastSetting                 string `json:"i$EMCFastSetting"`
+            I_EMCParticipateInPowerSavings   int    `json:"i$EMCParticipateInPowerSavings"`
+            I_EMCPoolCompressionState        int    `json:"i$EMCPoolCompressionState"`
+            I_EMCPottedSetting               bool   `json:"i$EMCPottedSetting"`
+            I_EMCRaidGroupLUN                bool   `json:"i$EMCRaidGroupLUN"`
+            I_EMCRaidLevel                   string `json:"i$EMCRaidLevel"`
+            I_EMCSLO                         string `json:"i$EMCSLO"`
+            I_EMCSLOBaseName                 string `json:"i$EMCSLOBaseName"`
+            I_EMCSLOdescription              string `json:"i$EMCSLOdescription"`
+            I_EMCSRP                         string `json:"i$EMCSRP"`
+            I_EMCStorageSettingType          int    `json:"i$EMCStorageSettingType"`
+            I_EMCUniqueID                    string `json:"i$EMCUniqueID"`
+            I_EMCWorkload                    string `json:"i$EMCWorkload"`
+            I_ExtentStripeLength             int    `json:"i$ExtentStripeLength"`
+            I_ExtentStripeLengthMax          int    `json:"i$ExtentStripeLengthMax"`
+            I_ExtentStripeLengthMin          int    `json:"i$ExtentStripeLengthMin"`
+            I_InitialStorageTierMethodology  int    `json:"i$InitialStorageTierMethodology"`
+            I_InitialStorageTieringSelection int    `json:"i$InitialStorageTieringSelection"`
+            I_InitialSynchronization         int    `json:"i$InitialSynchronization"`
+            I_InstanceID                     string `json:"i$InstanceID"`
+            I_NoSinglePointOfFailure         bool   `json:"i$NoSinglePointOfFailure"`
+            I_PackageRedundancyGoal          int    `json:"i$PackageRedundancyGoal"`
+            I_PackageRedundancyMax           int    `json:"i$PackageRedundancyMax"`
+            I_PackageRedundancyMin           int    `json:"i$PackageRedundancyMin"`
+            I_SpaceLimit                     int    `json:"i$SpaceLimit"`
+            I_StorageExtentInitialUsage      int    `json:"i$StorageExtentInitialUsage"`
+            I_StoragePoolInitialUsage        int    `json:"i$StoragePoolInitialUsage"`
+            I_ThinProvisionedPoolType        int    `json:"i$ThinProvisionedPoolType"`
+            I_UseReplicationBuffer           int    `json:"i$UseReplicationBuffer"`
+            Links                            []struct {
+                Href string `json:"href"`
+                Rel  string `json:"rel"`
+            } `json:"links"`
+            Xmlns_i string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Gd_etag      string `json:"gd$etag"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
@@ -695,8 +695,8 @@ type GetStoragePoolSettingsResp struct {
 ///////////////////////////////////////////////////////////////
 
 func (smis *SMIS) GetStoragePoolSettings(srp_name, sid string) (resp *GetStoragePoolSettingsResp, err error){
-	err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StoragePoolCapabilities/InstanceID::SYMMETRIX-+-" + sid + "-+-SR-+-" + srp_name + "/relationships/CIM_StorageSetting", nil, &resp)
-	return resp, err
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StoragePoolCapabilities/InstanceID::SYMMETRIX-+-" + sid + "-+-SR-+-" + srp_name + "/relationships/CIM_StorageSetting", nil, &resp)
+    return resp, err
 }
 
 ///////////////////////////////////////////////////////////////
@@ -704,46 +704,119 @@ func (smis *SMIS) GetStoragePoolSettings(srp_name, sid string) (resp *GetStorage
 ///////////////////////////////////////////////////////////////
 
 type SLO_Struct struct {
-	SLO_Name	string
-	respTime	float64
-	SRP		string
-	Workload	string
-	ElementName     string
-	InstanceID      string
+    SLO_Name        string
+    respTime        float64
+    SRP             string
+    Workload        string
+    ElementName     string
+    InstanceID      string
 }
 
 ////////////////////////////////////////////////////////////////
-//		GET Storage Level Objectives                  //
-//							      //
+//               GET Storage Level Objectives                 //
+//                                                            //
 //             1 -> Get Storage Pools of VMAX3                //
 //    2 -> Get Storage Pool Settings of each Storage Pool     //
 //   3 -> Parse out SLO information of VMAX3 and return it    //
 ////////////////////////////////////////////////////////////////
 
 func (smis *SMIS) GetSLOs(sid string) (SLOs []SLO_Struct, err error){
-	storagePools, err := smis.GetStoragePools(sid)
-	if err != nil {
+    storagePools, err := smis.GetStoragePools(sid)
+    if err != nil {
                return nil, err
         }
 
-	for _, SRP := range storagePools.Entries {
-		storagePoolSetting, err := smis.GetStoragePoolSettings(SRP.Content.I_ElementName, sid)
-		if err != nil {
-		        return nil, err
-	        }
-		for _, storagePoolSetting := range storagePoolSetting.Entries {
-			if(storagePoolSetting.Content.I_EMCSLO != ""){
-				newSLO := SLO_Struct{
-					SLO_Name : storagePoolSetting.Content.I_EMCSLOBaseName,
-					respTime : storagePoolSetting.Content.I_EMCApproxAverageResponseTime,
-		                        SRP : storagePoolSetting.Content.I_EMCSRP,
-				        Workload : storagePoolSetting.Content.I_EMCWorkload,
-					ElementName : storagePoolSetting.Content.I_ElementName,
-					InstanceID : storagePoolSetting.Content.I_InstanceID,
-				}
-				SLOs = append(SLOs, newSLO)
-			}
-		}
-	}
-	return SLOs, nil
+    for _, SRP := range storagePools.Entries {
+        storagePoolSetting, err := smis.GetStoragePoolSettings(SRP.Content.I_ElementName, sid)
+        if err != nil {
+                return nil, err
+            }
+        for _, storagePoolSetting := range storagePoolSetting.Entries {
+            if(storagePoolSetting.Content.I_EMCSLO != ""){
+                newSLO := SLO_Struct{
+                    SLO_Name : storagePoolSetting.Content.I_EMCSLOBaseName,
+                    respTime : storagePoolSetting.Content.I_EMCApproxAverageResponseTime,
+                    SRP : storagePoolSetting.Content.I_EMCSRP,
+                    Workload : storagePoolSetting.Content.I_EMCWorkload,
+                    ElementName : storagePoolSetting.Content.I_ElementName,
+                    InstanceID : storagePoolSetting.Content.I_InstanceID,
+                }
+                SLOs = append(SLOs, newSLO)
+            }
+        }
+    }
+    return SLOs, nil
 }
+
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//   adding a volume to a storage group on the VMAX3.  //
+/////////////////////////////////////////////////////////
+
+type PostVolumesToSGReq struct {
+    PostVolumesToSGRequestContent PostVolumesToSGReqContent `json:"content"`
+}
+
+type PostVolumesToSGReqContent struct {
+    AtType                                 string                                `json:"@type"`
+    PostVolumesToSGRequestContentMG        PostVolumesToSGReqContentMG           `json:"MaskingGroup"`
+    PostVolumesToSGRequestContentMember    []PostVolumesToSGReqContentMember     `json:"Members"`
+}
+
+type PostVolumesToSGReqContentMG struct {
+    AtType          string `json:"@type"`
+    InstanceID      string `json:"InstanceID"`
+}
+
+type PostVolumesToSGReqContentMember struct {
+    AtType                      string `json:"@type"`
+    CreationClassName           string `json:"CreationClassName"`
+    DeviceID                    string `json:"DeviceID"`
+    SystemCreationClassName     string `json:"SystemCreationClassName"`
+    SystemName                  string `json:"SystemName"`
+}
+
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//     adding a volume to a storage group on the VMAX3.   //
+////////////////////////////////////////////////////////////
+
+type PostVolumesToSGResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_Parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_ReturnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+///////////////////////////////////////////////////////////////
+//             ADD Volumes to a Storage Group                //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostVolumesToSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
+    return resp,err
+}
+

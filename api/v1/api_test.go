@@ -160,4 +160,33 @@ func TestGetSLOs(*testing.T) {
     fmt.Printf("%+v", SLOs)
 }
 
+func TestPostVolumeToSG(*testing.T) {
 
+	PostVol2SGRequest := &PostVolumesToSGReq{
+		PostVolumesToSGRequestContent : PostVolumesToSGReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
+			PostVolumesToSGRequestContentMG : PostVolumesToSGReqContentMG{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_DeviceMaskingGroup",
+				//Change SMI_sg2 to any existing Storage Group ID
+   		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-SMI_sg2",
+			},
+			PostVolumesToSGRequestContentMember : []PostVolumesToSGReqContentMember{
+				PostVolumesToSGReqContentMember {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageVolume",
+    			CreationClassName : "Symm_StorageVolume",
+    			//Change DeviceID to existing Volume ID
+    			DeviceID  : "00051",
+    			SystemCreationClassName : "Symm_StorageSystem",
+    			SystemName : "SYMMETRIX-+-" + testingSID,
+    			},
+    		},
+		},
+	}
+
+	vol2SG, err := smis.PostVolumesToSG(PostVol2SGRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", vol2SG))
+}

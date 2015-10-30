@@ -548,7 +548,7 @@ func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolume
 //////////////////////////////////////
 //   REQUEST Structs used for any   //
 //   group creation on the VMAX3.   //
-//                      //
+//                                  //
 //    Storage Group (SG) - Type 4   //
 //     Port Group (PG) - Type 3     //
 //   Initiator Group (IG) - Type 2  //
@@ -820,3 +820,210 @@ func (smis *SMIS) PostVolumesToSG(req *PostVolumesToSGReq, sid string) (resp *Po
     return resp,err
 }
 
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//   creating a storage hardware ID for an initiator   //
+/////////////////////////////////////////////////////////
+
+type PostStorageHardwareIDReq struct {
+    PostStorageHardwareIDRequestContent PostStorageHardwareIDReqContent `json:"content"`
+}
+
+type PostStorageHardwareIDReqContent struct {
+    AtType      string      `json:"@type"`
+    IDType      string      `json:"IDType"`
+    StorageID   string      `json:"StorageID"`
+}
+
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//   creating a storage hardware ID for an initiator      //
+////////////////////////////////////////////////////////////
+
+type PostStorageHardwareIDResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_Parameters struct {
+                I_HardwareID struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$HardwareID"`
+            } `json:"i$parameters"`
+            I_ReturnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//  adding a initiators to a host group on the VMAX3.  //
+/////////////////////////////////////////////////////////
+
+type PostInitiatorsToHGReq struct {
+    PostInitiatorsToHGRequestContent PostInitiatorsToHGReqContent `json:"content"`
+}
+
+type PostInitiatorsToHGReqContent struct {
+    AtType                                    string                                `json:"@type"`
+    PostInitiatorsToHGRequestContentMG        PostInitiatorsToHGReqContentMG        `json:"MaskingGroup"`
+    PostInitiatorsToHGRequestContentMember    []PostInitiatorsToHGReqContentMember  `json:"Members"`
+}
+
+type PostInitiatorsToHGReqContentMG struct {
+    AtType          string `json:"@type"`
+    InstanceID      string `json:"InstanceID"`
+}
+
+type PostInitiatorsToHGReqContentMember struct {
+    AtType          string `json:"@type"`
+    InstanceID      string `json:"InstanceID"`
+}
+
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//    adding a initiators to a host group on the VMAX3.   //
+////////////////////////////////////////////////////////////
+
+type PostInitiatorsToHGResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_Parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_ReturnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+
+///////////////////////////////////////////////////////////////
+//             ADD Initiators to a Host Group                //
+//                                                           //
+//     1 -> Create Storage Hardware ID for the Initiator     //
+//     2 -> Add Storage Hardware ID to Initiator Group       //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostStorageHardwareID(req *PostStorageHardwareIDReq, sid string) (resp *PostStorageHardwareIDResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateStorageHardwareID", req, &resp)
+    return resp,err
+}
+
+func (smis *SMIS) PostInitiatorsToHG(req *PostInitiatorsToHGReq, sid string) (resp *PostInitiatorsToHGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
+    return resp,err
+}
+
+/*
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//  adding a ports to a port group on the VMAX3.       //
+/////////////////////////////////////////////////////////
+
+type PostPortsToPGReq struct {
+    PostPortsToPGRequestContent PostPortsToPGReqContent `json:"content"`
+}
+
+type PostPortsToPGReqContent struct {
+    AtType                               string                               `json:"@type"`
+    PostPortsToPGRequestContentMG        PostPortsToPGReqContentMG            `json:"MaskingGroup"`
+    PostPortsToPGRequestContentMember    []PostPortsToPGReqContentMember      `json:"Members"`
+}
+
+type PostPortsToPGReqContentMG struct {
+    AtType          string `json:"@type"`
+    InstanceID      string `json:"InstanceID"`
+}
+
+type PostPortsToPGReqContentMember struct {
+    AtType                      string `json:"@type"`
+    CreationClassName           string `json:"CreationClassName"`
+    Name                        string `json:"Name"`
+    SystemCreationClassName     string `json:"SystemCreationClassName"`
+    SystemName                  string `json:"SystemName"`
+}
+
+
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//    adding a ports to a port group on the VMAX3.        //
+////////////////////////////////////////////////////////////
+
+type PostPortsToPGResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_Parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_ReturnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+
+/////////////////////////////////////////////////////////////////////
+//                     ADD Ports to a Port Group                   //
+//                                                                 //
+//    1 -> GET a list of Available Interfaces (aka FE Directors)   //
+// 2 -> GET a list of Front End Adapter Endpoints (aka FE Ports)   //
+//                  3 -> ADD ports to Port Groups                  //
+/////////////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostPortsToPG(req *PostPortsToPGReq, sid string) (resp *PostPortsToPGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateStorageHardwareID", req, &resp)
+    return resp,err
+}
+*/

@@ -40,7 +40,6 @@ func TestGetStorageArrays(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v",arrays))
 }
 
-/*
 func TestGetStoragePools(*testing.T) {
 
 	pools, err := smis.GetStoragePools(testingSID)
@@ -191,8 +190,6 @@ func TestPostVolumeToSG(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", vol2SG))
 }
 
-*/
-
 func TestPostStorageHardwareID(*testing.T) {
 	PostSHIDRequest := &PostStorageHardwareIDReq{
 		PostStorageHardwareIDRequestContent : PostStorageHardwareIDReqContent{
@@ -235,7 +232,6 @@ func TestPostInitiatorsToHG(*testing.T) {
 
 	fmt.Println(fmt.Sprintf("%+v", vol2SG))
 }
-/*
 
 func TestPostPortsToPG(*testing.T) {
 
@@ -254,6 +250,7 @@ func TestPostPortsToPG(*testing.T) {
     			//Change Name to existing FE port 
     			Name : "5000097350159009",
     			SystemCreationClassName : "Symm_StorageProcessorSystem",
+    			//Change to existing director and port
     			SystemName : "SYMMETRIX-+-" + testingSID + "-+-FA-1D-+-9",
     			},
     		},
@@ -267,7 +264,7 @@ func TestPostPortsToPG(*testing.T) {
 
 	fmt.Println(fmt.Sprintf("%+v", port2PG))
 }
-*/
+
 
 func TestPostCreateMaskingView(*testing.T) {
 	

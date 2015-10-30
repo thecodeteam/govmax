@@ -948,7 +948,6 @@ func (smis *SMIS) PostInitiatorsToHG(req *PostInitiatorsToHGReq, sid string) (re
     return resp,err
 }
 
-/*
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
 //  adding a ports to a port group on the VMAX3.       //
@@ -1019,51 +1018,50 @@ type PostPortsToPGResp struct {
 //                                                                 //
 //    1 -> GET a list of Available Interfaces (aka FE Directors)   //
 // 2 -> GET a list of Front End Adapter Endpoints (aka FE Ports)   //
-//                  3 -> ADD ports to Port Groups                  //
+//                  3 -> ADD Ports to Port Groups                  //
 /////////////////////////////////////////////////////////////////////
 
 func (smis *SMIS) PostPortsToPG(req *PostPortsToPGReq, sid string) (resp *PostPortsToPGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateStorageHardwareID", req, &resp)
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
     return resp,err
 }
-*/
-func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid string) (resp *PostCreateMaskingViewResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateMaskingView", req, &resp)
-    return resp,err
-}
+
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//        creating a masking view on the VMAX3.        //
+/////////////////////////////////////////////////////////
 
 type PostCreateMaskingViewReq struct {
     PostCreateMaskingViewRequestContent PostCreateMaskingViewReqContent `json:"content"`
 }
 
 type PostCreateMaskingViewReqContent struct {
-    AtType                 string `json:"@type"`
-    ElementName            string `json:"ElementName"`
-    
-    PostInitiatorMaskingGroupRequest PostInitiatorMaskingGroupReq  `json:"InitiatorMaskingGroup"`
-
-    PostTargetMaskingGroupRequest PostTargetMaskingGroupReq  `json:"TargetMaskingGroup"`
-
-    PostDeviceMaskingGroupRequest PostDeviceMaskingGroupReq  `json:"DeviceMaskingGroup"`
-    
+    AtType                              string                          `json:"@type"`
+    ElementName                         string                          `json:"ElementName"`
+    PostInitiatorMaskingGroupRequest    PostInitiatorMaskingGroupReq    `json:"InitiatorMaskingGroup"`
+    PostTargetMaskingGroupRequest       PostTargetMaskingGroupReq       `json:"TargetMaskingGroup"`
+    PostDeviceMaskingGroupRequest       PostDeviceMaskingGroupReq       `json:"DeviceMaskingGroup"`
 }
 
 type PostInitiatorMaskingGroupReq struct{
-    AtType             string `json:"@type"`
+    AtType           string  `json:"@type"`
     InstanceID       string  `json: "InstanceID"`
 } 
 type PostTargetMaskingGroupReq struct{
-    AtType             string `json:"@type"`
+    AtType           string  `json:"@type"`
     InstanceID       string  `json: "InstanceID"`
 } 
 type PostDeviceMaskingGroupReq struct{
-    AtType             string `json:"@type"`
+    AtType           string  `json:"@type"`
     InstanceID       string  `json: "InstanceID"`
 } 
 
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//        creating a masking view on the VMAX3.           //
+////////////////////////////////////////////////////////////
 
 type PostCreateMaskingViewResp struct {
-
     Xmlns_gd string `json:"xmlns$gd"`
     Updated  string `json:"updated"`
     ID    string `json:"id"`
@@ -1099,5 +1097,11 @@ type PostCreateMaskingViewResp struct {
     } `json:"entries"`
 }
 
+///////////////////////////////////////////////////////////////
+//                  CREATE a Masking View                    //
+///////////////////////////////////////////////////////////////
 
-
+func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid string) (resp *PostCreateMaskingViewResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateMaskingView", req, &resp)
+    return resp,err
+}

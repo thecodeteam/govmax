@@ -1027,3 +1027,77 @@ func (smis *SMIS) PostPortsToPG(req *PostPortsToPGReq, sid string) (resp *PostPo
     return resp,err
 }
 */
+func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid string) (resp *PostCreateMaskingViewResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateMaskingView", req, &resp)
+    return resp,err
+}
+
+type PostCreateMaskingViewReq struct {
+    PostCreateMaskingViewRequestContent PostCreateMaskingViewReqContent `json:"content"`
+}
+
+type PostCreateMaskingViewReqContent struct {
+    AtType                 string `json:"@type"`
+    ElementName            string `json:"ElementName"`
+    
+    PostInitiatorMaskingGroupRequest PostInitiatorMaskingGroupReq  `json:"InitiatorMaskingGroup"`
+
+    PostTargetMaskingGroupRequest PostTargetMaskingGroupReq  `json:"TargetMaskingGroup"`
+
+    PostDeviceMaskingGroupRequest PostDeviceMaskingGroupReq  `json:"DeviceMaskingGroup"`
+    
+}
+
+type PostInitiatorMaskingGroupReq struct{
+    AtType             string `json:"@type"`
+    InstanceID       string  `json: "InstanceID"`
+} 
+type PostTargetMaskingGroupReq struct{
+    AtType             string `json:"@type"`
+    InstanceID       string  `json: "InstanceID"`
+} 
+type PostDeviceMaskingGroupReq struct{
+    AtType             string `json:"@type"`
+    InstanceID       string  `json: "InstanceID"`
+} 
+
+
+type PostCreateMaskingViewResp struct {
+
+    Xmlns_gd string `json:"xmlns$gd"`
+    Updated  string `json:"updated"`
+    ID    string `json:"id"`
+
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+
+    Entries []struct {
+
+        Updated string `json:"updated"`
+        
+        Links []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+
+        Content_type string `json:"content-type"`
+        
+        Content struct {
+            AtType       string `json:"@type"`
+            Xmlns_i       string `json:"xmlns$i"`
+            I_Parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_ReturnValue int    `json:"i$returnValue"` 
+        } `json:"content"`  
+    } `json:"entries"`
+}
+
+
+

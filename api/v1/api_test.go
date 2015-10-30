@@ -268,3 +268,33 @@ func TestPostPortsToPG(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", port2PG))
 }
 */
+
+func TestPostCreateMaskingView(*testing.T) {
+	
+	PostCreateMaskingViewReq := &PostCreateMaskingViewReq{
+		PostCreateMaskingViewRequestContent : PostCreateMaskingViewReqContent{
+			AtType :  "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
+			ElementName : "Sak_MV_TEST",
+			PostInitiatorMaskingGroupRequest : PostInitiatorMaskingGroupReq{
+				AtType : 	"http://schemas.emc.com/ecom/edaa/root/emc/SE_InitiatorMaskingGroup",
+				InstanceID : "SYMMETRIX-+-000196701380-+-tt",
+			},
+			PostTargetMaskingGroupRequest : PostTargetMaskingGroupReq {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_TargetMaskingGroup",
+				InstanceID :  "SYMMETRIX-+-000196701380-+-ttt",
+			},
+			PostDeviceMaskingGroupRequest : PostDeviceMaskingGroupReq {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_DeviceMaskingGroup",
+				InstanceID :   "SYMMETRIX-+-000196701380-+-SMI_sg2",
+			},	
+		},
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", PostCreateMaskingViewReq))
+
+	storageGroup, err := smis.PostCreateMaskingView(PostCreateMaskingViewReq,testingSID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", storageGroup))
+}

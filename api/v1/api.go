@@ -1,6 +1,10 @@
 package apiv1
 
-import ()
+import (
+        "io/ioutil"
+        "os"
+        //"bytes"
+        )
 
 ////////////////////////////////////////////////////////////
 //             RESPONSE Struct used for                   //
@@ -750,7 +754,8 @@ func (smis *SMIS) GetSLOs(sid string) (SLOs []SLO_Struct, err error){
 
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
-//   adding a volume to a storage group on the VMAX3.  //
+//         adding AND removing a volume to/from        //
+//             a storage group on the VMAX3.           //
 /////////////////////////////////////////////////////////
 
 type PostVolumesToSGReq struct {
@@ -777,8 +782,9 @@ type PostVolumesToSGReqContentMember struct {
 }
 
 ////////////////////////////////////////////////////////////
-//            RESPONSE Struct used for                    //
-//     adding a volume to a storage group on the VMAX3.   //
+//               RESPONSE Struct used for                 //
+//         adding AND removing a volume to/from           //
+//             a storage group on the VMAX3.              //
 ////////////////////////////////////////////////////////////
 
 type PostVolumesToSGResp struct {
@@ -819,6 +825,16 @@ func (smis *SMIS) PostVolumesToSG(req *PostVolumesToSGReq, sid string) (resp *Po
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
     return resp,err
 }
+
+///////////////////////////////////////////////////////////////
+//          REMOVE Volumes from a Storage Group              //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) RemoveVolumeFromSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
+    return resp,err
+}
+
 
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
@@ -871,36 +887,38 @@ type PostStorageHardwareIDResp struct {
 }
 
 /////////////////////////////////////////////////////////
-//               REQUEST Structs used for              //
-//  adding a initiators to a host group on the VMAX3.  //
+//               REQUEST Struct used for               //
+//       adding AND removing an initiator to/from      //
+//              a host group on the VMAX3.             //
 /////////////////////////////////////////////////////////
 
-type PostInitiatorsToHGReq struct {
-    PostInitiatorsToHGRequestContent PostInitiatorsToHGReqContent `json:"content"`
+type PostInitiatorToHGReq struct {
+    PostInitiatorToHGRequestContent PostInitiatorToHGReqContent `json:"content"`
 }
 
-type PostInitiatorsToHGReqContent struct {
-    AtType                                    string                                `json:"@type"`
-    PostInitiatorsToHGRequestContentMG        PostInitiatorsToHGReqContentMG        `json:"MaskingGroup"`
-    PostInitiatorsToHGRequestContentMember    []PostInitiatorsToHGReqContentMember  `json:"Members"`
+type PostInitiatorToHGReqContent struct {
+    AtType                                   string                                `json:"@type"`
+    PostInitiatorToHGRequestContentMG        PostInitiatorToHGReqContentMG        `json:"MaskingGroup"`
+    PostInitiatorToHGRequestContentMember    []PostInitiatorToHGReqContentMember  `json:"Members"`
 }
 
-type PostInitiatorsToHGReqContentMG struct {
+type PostInitiatorToHGReqContentMG struct {
     AtType          string `json:"@type"`
     InstanceID      string `json:"InstanceID"`
 }
 
-type PostInitiatorsToHGReqContentMember struct {
+type PostInitiatorToHGReqContentMember struct {
     AtType          string `json:"@type"`
     InstanceID      string `json:"InstanceID"`
 }
 
 ////////////////////////////////////////////////////////////
-//            RESPONSE Struct used for                    //
-//    adding a initiators to a host group on the VMAX3.   //
+//                RESPONSE Struct used for                //
+//        adding AND removing an initiator to/from        //
+//             a host group on the VMAX3.                 //
 ////////////////////////////////////////////////////////////
 
-type PostInitiatorsToHGResp struct {
+type PostInitiatorToHGResp struct {
     Entries []struct {
         Content struct {
             AtType       string `json:"@type"`
@@ -943,32 +961,43 @@ func (smis *SMIS) PostStorageHardwareID(req *PostStorageHardwareIDReq, sid strin
     return resp,err
 }
 
-func (smis *SMIS) PostInitiatorsToHG(req *PostInitiatorsToHGReq, sid string) (resp *PostInitiatorsToHGResp, err error){
+func (smis *SMIS) PostInitiatorToHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error){
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
+    return resp,err
+}
+
+///////////////////////////////////////////////////////////////
+//          REMOVE Initiators from a Host Group              //
+//     (Requires a Storage Hardware ID from the Initiator)   //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) RemoveInitiatorFromHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
     return resp,err
 }
 
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
-//  adding a ports to a port group on the VMAX3.       //
+//         adding AND removing a port to/from          //
+//           a port group on the VMAX3.                //
 /////////////////////////////////////////////////////////
 
-type PostPortsToPGReq struct {
-    PostPortsToPGRequestContent PostPortsToPGReqContent `json:"content"`
+type PostPortToPGReq struct {
+    PostPortToPGRequestContent PostPortToPGReqContent `json:"content"`
 }
 
-type PostPortsToPGReqContent struct {
+type PostPortToPGReqContent struct {
     AtType                               string                               `json:"@type"`
-    PostPortsToPGRequestContentMG        PostPortsToPGReqContentMG            `json:"MaskingGroup"`
-    PostPortsToPGRequestContentMember    []PostPortsToPGReqContentMember      `json:"Members"`
+    PostPortToPGRequestContentMG        PostPortToPGReqContentMG            `json:"MaskingGroup"`
+    PostPortToPGRequestContentMember    []PostPortToPGReqContentMember      `json:"Members"`
 }
 
-type PostPortsToPGReqContentMG struct {
+type PostPortToPGReqContentMG struct {
     AtType          string `json:"@type"`
     InstanceID      string `json:"InstanceID"`
 }
 
-type PostPortsToPGReqContentMember struct {
+type PostPortToPGReqContentMember struct {
     AtType                      string `json:"@type"`
     CreationClassName           string `json:"CreationClassName"`
     Name                        string `json:"Name"`
@@ -977,12 +1006,13 @@ type PostPortsToPGReqContentMember struct {
 }
 
 
-////////////////////////////////////////////////////////////
-//            RESPONSE Struct used for                    //
-//    adding a ports to a port group on the VMAX3.        //
-////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+//            RESPONSE Struct used for               //
+//       adding AND removing a port to/from          //
+//            a port group on the VMAX3.             //
+///////////////////////////////////////////////////////
 
-type PostPortsToPGResp struct {
+type PostPortToPGResp struct {
     Entries []struct {
         Content struct {
             AtType       string `json:"@type"`
@@ -1021,8 +1051,17 @@ type PostPortsToPGResp struct {
 //                  3 -> ADD Ports to Port Groups                  //
 /////////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostPortsToPG(req *PostPortsToPGReq, sid string) (resp *PostPortsToPGResp, err error){
+func (smis *SMIS) PostPortToPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error){
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
+    return resp,err
+}
+
+///////////////////////////////////////////////////////////////
+//             REMOVE Ports from a Port Group                //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) RemovePortFromPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
     return resp,err
 }
 
@@ -1105,3 +1144,36 @@ func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid strin
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateMaskingView", req, &resp)
     return resp,err
 }
+
+
+////////////////////////////////////////////////////////////////
+//     Struct used to store all Baremetal HBA Information     //
+////////////////////////////////////////////////////////////////
+
+type HostAdapter struct {
+    HostID  string 
+    WWN   string
+}
+
+////////////////////////////////////////////////////////////////
+//             GET Baremetal HBA Information                  //
+////////////////////////////////////////////////////////////////
+
+func GetBaremetalHBA() (myHosts []HostAdapter, err error){
+    //Works for RedHat 5 and above (including CentOS and SUSE Linux)
+    hostDir, _ := ioutil.ReadDir("/sys/class/scsi_host/")
+
+    for _, host := range hostDir {
+        if _, err := os.Stat("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name"); err == nil {
+            byteArray, _ := ioutil.ReadFile("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name")
+            newHost := HostAdapter{
+                HostID : host.Name(),
+                WWN : string(byteArray),
+            }
+            myHosts = append(myHosts, newHost)
+        }
+    }
+    return myHosts, nil
+}
+
+

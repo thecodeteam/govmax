@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	//"time"
+	"time"
 )
 
 var smis *SMIS
@@ -205,18 +205,18 @@ func TestPostStorageHardwareID(*testing.T) {
 	fmt.Println(fmt.Sprintf("%+v", storageGroup))
 }
 
-func TestPostInitiatorsToHG(*testing.T) {
+func TestPostInitiatorToHG(*testing.T) {
 
-	PostInit2SGRequest := &PostInitiatorsToHGReq{
-		PostInitiatorsToHGRequestContent : PostInitiatorsToHGReqContent{
+	PostInit2SGRequest := &PostInitiatorToHGReq{
+		PostInitiatorToHGRequestContent : PostInitiatorToHGReqContent{
 			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
-			PostInitiatorsToHGRequestContentMG : PostInitiatorsToHGReqContentMG{
+			PostInitiatorToHGRequestContentMG : PostInitiatorToHGReqContentMG{
 				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_InitiatorMaskingGroup",
 				//Change test_hg to any existing Host Group ID
    		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-test_hg",
 			},
-			PostInitiatorsToHGRequestContentMember : []PostInitiatorsToHGReqContentMember{
-				PostInitiatorsToHGReqContentMember {
+			PostInitiatorToHGRequestContentMember : []PostInitiatorToHGReqContentMember{
+				PostInitiatorToHGReqContentMember {
 				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_StorageHardwareID",
     			//Change InstanceID to existing Initiator 
     			InstanceID : "10000000C94E5D22",
@@ -225,26 +225,26 @@ func TestPostInitiatorsToHG(*testing.T) {
 		},
 	}
 
-	vol2SG, err := smis.PostInitiatorsToHG(PostInit2SGRequest,testingSID)
+	init2HG, err := smis.PostInitiatorToHG(PostInit2SGRequest,testingSID)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(fmt.Sprintf("%+v", vol2SG))
+	fmt.Println(fmt.Sprintf("%+v", init2HG))
 }
 
-func TestPostPortsToPG(*testing.T) {
+func TestPostPortToPG(*testing.T) {
 
-	PostPort2PGRequest := &PostPortsToPGReq{
-		PostPortsToPGRequestContent : PostPortsToPGReqContent{
+	PostPort2PGRequest := &PostPortToPGReq{
+		PostPortToPGRequestContent : PostPortToPGReqContent{
 			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
-			PostPortsToPGRequestContentMG : PostPortsToPGReqContentMG{
+			PostPortToPGRequestContentMG : PostPortToPGReqContentMG{
 				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_TargetMaskingGroup",
 				//Change test_pg to any existing Port Group ID
    		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-test_pg",
 			},
-			PostPortsToPGRequestContentMember : []PostPortsToPGReqContentMember{
-				PostPortsToPGReqContentMember {
+			PostPortToPGRequestContentMember : []PostPortToPGReqContentMember{
+				PostPortToPGReqContentMember {
 				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_FCSCSIProtocolEndpoint",
     			CreationClassName : "Symm_FCSCSIProtocolEndpoint",
     			//Change Name to existing FE port 
@@ -257,7 +257,7 @@ func TestPostPortsToPG(*testing.T) {
 		},
 	}
 
-	port2PG, err := smis.PostPortsToPG(PostPort2PGRequest,testingSID)
+	port2PG, err := smis.PostPortToPG(PostPort2PGRequest,testingSID)
 	if err != nil {
 		panic(err)
 	}
@@ -294,4 +294,106 @@ func TestPostCreateMaskingView(*testing.T) {
 		panic(err)
 	}
 	fmt.Println(fmt.Sprintf("%+v", storageGroup))
+}
+
+func TestGetBaremetalHBA(*testing.T) {
+
+    HBAs, err := GetBaremetalHBA()
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("%+v", HBAs)
+}
+
+func TestRemoveVolumeFromSG(*testing.T) {
+
+	RemVol2SGRequest := &PostVolumesToSGReq{
+		PostVolumesToSGRequestContent : PostVolumesToSGReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
+			PostVolumesToSGRequestContentMG : PostVolumesToSGReqContentMG{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_DeviceMaskingGroup",
+				//Change SMI_sg2 to any existing Storage Group ID
+   		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-Kim_SG",
+			},
+			PostVolumesToSGRequestContentMember : []PostVolumesToSGReqContentMember{
+				PostVolumesToSGReqContentMember {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageVolume",
+    			CreationClassName : "Symm_StorageVolume",
+    			//Change DeviceID to existing Volume ID
+    			DeviceID  : "0001",
+    			SystemCreationClassName : "Symm_StorageSystem",
+    			SystemName : "SYMMETRIX-+-" + testingSID,
+    			},
+    		},
+		},
+	}
+
+	rmVol, err := smis.RemoveVolumeFromSG(RemVol2SGRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", rmVol))
+}
+
+
+func TestRemovePortFromPG(*testing.T) {
+
+	RemPort2PGRequest := &PostPortToPGReq{
+		PostPortToPGRequestContent : PostPortToPGReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
+			PostPortToPGRequestContentMG : PostPortToPGReqContentMG{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_TargetMaskingGroup",
+				//Change test_pg to any existing Port Group ID
+   		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-ttt",
+			},
+			PostPortToPGRequestContentMember : []PostPortToPGReqContentMember{
+				PostPortToPGReqContentMember {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_FCSCSIProtocolEndpoint",
+    			CreationClassName : "Symm_FCSCSIProtocolEndpoint",
+    			//Change Name to existing FE port 
+    			Name : "500009735015908a",
+    			SystemCreationClassName : "Symm_StorageProcessorSystem",
+    			//Change to existing director and port
+    			SystemName : "SYMMETRIX-+-" + testingSID + "-+-FA-3D-+-10",
+    			},
+    		},
+		},
+	}
+
+	rmPort, err := smis.RemovePortFromPG(RemPort2PGRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", rmPort))
+}
+
+func TestRemoveInitiatorFromHG(*testing.T) {
+
+	RemInit2SGRequest := &PostInitiatorToHGReq{
+		PostInitiatorToHGRequestContent : PostInitiatorToHGReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerconfigurationService",
+			PostInitiatorToHGRequestContentMG : PostInitiatorToHGReqContentMG{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_InitiatorMaskingGroup",
+				//Change test_hg to any existing Host Group ID
+   		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-test_hg",
+			},
+			PostInitiatorToHGRequestContentMember : []PostInitiatorToHGReqContentMember{
+				PostInitiatorToHGReqContentMember {
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_StorageHardwareID",
+    			//Change InstanceID to existing Initiator 
+    			InstanceID : "10000000C94E5D22",
+    			},
+    		},
+		},
+	}
+
+	rmInit, err := smis.RemoveInitiatorFromHG(RemInit2SGRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%+v", rmInit))
 }

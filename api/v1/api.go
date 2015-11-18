@@ -3,7 +3,6 @@ package apiv1
 import (
         "io/ioutil"
         "os"
-        //"bytes"
         )
 
 ////////////////////////////////////////////////////////////
@@ -14,7 +13,7 @@ import (
 type GetStorageArraysResp struct {
     Entries []struct {
         Content struct {
-            AtType                          string      `json:"@type"`
+            AtType                         string      `json:"@type"`
             I_Caption                      string      `json:"i$Caption"`
             I_CreationClassName            string      `json:"i$CreationClassName"`
             I_Dedicated                    []int       `json:"i$Dedicated"`
@@ -108,7 +107,7 @@ func (smis *SMIS) GetStorageArrays() (resp *GetStorageArraysResp, err error){
 type GetStoragePoolsResp  struct {
     Entries []struct {
         Content struct {
-            AtType                         string        `json:"@type"`
+            AtType                        string        `json:"@type"`
             I_ClientSettableUsage         []interface{} `json:"i$ClientSettableUsage"`
             I_ConsumedResourceUnits       string        `json:"i$ConsumedResourceUnits"`
             I_Description                 interface{}   `json:"i$Description"`
@@ -180,7 +179,7 @@ func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err er
 type GetMaskingViewsResp struct {
     Entries []struct {
         Content struct {
-            AtType                     string   `json:"@type"`
+            AtType                    string   `json:"@type"`
             I_Caption                 string   `json:"i$Caption"`
             I_CreationClassName       string   `json:"i$CreationClassName"`
             I_Description             string   `json:"i$Description"`
@@ -241,7 +240,7 @@ func (smis *SMIS) GetMaskingViews(sid string) (resp *GetMaskingViewsResp, err er
 type GetStorageGroupsResp struct {
     Entries []struct {
         Content struct {
-            AtType                             string      `json:"@type"`
+            AtType                            string      `json:"@type"`
             I_Caption                         string      `json:"i$Caption"`
             I_DeleteOnEmpty                   bool        `json:"i$DeleteOnEmpty"`
             I_DeleteWhenBecomesUnassociated   bool        `json:"i$DeleteWhenBecomesUnassociated"`
@@ -564,7 +563,7 @@ type PostGroupReq struct {
 
 type PostGroupReqContent struct {
         AtType           string `json:"@type"`
-        SG_Name          string `json:"GroupName"`
+        GroupName        string `json:"GroupName"`
         Type             string `json:"Type"`
 }
 
@@ -1084,15 +1083,15 @@ type PostCreateMaskingViewReqContent struct {
 
 type PostInitiatorMaskingGroupReq struct{
     AtType           string  `json:"@type"`
-    InstanceID       string  `json: "InstanceID"`
+    InstanceID       string  `json:"InstanceID"`
 } 
 type PostTargetMaskingGroupReq struct{
     AtType           string  `json:"@type"`
-    InstanceID       string  `json: "InstanceID"`
+    InstanceID       string  `json:"InstanceID"`
 } 
 type PostDeviceMaskingGroupReq struct{
     AtType           string  `json:"@type"`
-    InstanceID       string  `json: "InstanceID"`
+    InstanceID       string  `json:"InstanceID"`
 } 
 
 ////////////////////////////////////////////////////////////
@@ -1123,7 +1122,7 @@ type PostCreateMaskingViewResp struct {
         
         Content struct {
             AtType       string `json:"@type"`
-            Xmlns_i       string `json:"xmlns$i"`
+            Xmlns_i      string `json:"xmlns$i"`
             I_Parameters struct {
                 I_Job struct {
                     AtType        string `json:"@type"`
@@ -1175,5 +1174,207 @@ func GetBaremetalHBA() (myHosts []HostAdapter, err error){
     }
     return myHosts, nil
 }
+
+//////////////////////////////////////////////////////////////
+//             REQUEST Structs used for any                 //
+//             group deletion on the VMAX3.                 //
+//                                                          //
+//   Storage Group (SG) - AtType SE_DeviceMaskingGroup      //
+//      Port Group (PG) - AtType SE_TargetMaskingGroup      //
+//  Initiator Group (IG) - AtType SE_InitiatorMaskingGroup  //
+//////////////////////////////////////////////////////////////
+
+type DeleteGroupReq struct {
+        DeleteGroupRequestContent DeleteGroupReqContent `json:"content"`
+}
+
+type DeleteGroupReqContent struct {
+        AtType                                  string                              `json:"@type"`
+        DeleteGroupRequestContentMaskingGroup   DeleteGroupReqContentMaskingGroup   `json:"MaskingGroup"`
+}
+
+type DeleteGroupReqContentMaskingGroup struct {
+        AtType           string  `json:"@type"`
+        InstanceID       string  `json:"InstanceID"`
+}
+
+////////////////////////////////////////////////////////////
+//           RESPONSE Struct used for any                 //
+//           group deletion on the VMAX3.                 //
+////////////////////////////////////////////////////////////
+
+type DeleteGroupResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_returnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+/////////////////////////////////////////////////////////////////
+//                  DELETE an Array Group                      //
+// Type Depends on AtType field specified in requesting struct //
+/////////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostDeleteGroup(req *DeleteGroupReq, sid string) (resp *DeleteGroupResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/DeleteGroup", req, &resp)
+    return resp, err
+}
+
+
+//////////////////////////////////////////////////////////////
+//             REQUEST Structs used for any                 //
+//             volume deletion on the VMAX3.                //
+//////////////////////////////////////////////////////////////
+
+type DeleteVolReq struct {
+        DeleteVolRequestContent DeleteVolReqContent `json:"content"`
+}
+
+type DeleteVolReqContent struct {
+        AtType                                  string                              `json:"@type"`
+        DeleteVolRequestContentElement          DeleteVolReqContentElement          `json:"TheElement"`
+}
+
+type DeleteVolReqContentElement struct {
+        AtType                  string  `json:"@type"`
+        DeviceID                string  `json:"DeviceID"`
+        CreationClassName       string  `json:"CreationClassName"`
+        SystemName              string  `json:"SystemName"`
+        SystemCreationClassName string  `json:"SystemCreationClassName"`
+}
+
+////////////////////////////////////////////////////////////
+//           RESPONSE Struct used for any                 //
+//           volume deletion on the VMAX3.                //
+////////////////////////////////////////////////////////////
+
+type DeleteVolResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_returnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+/////////////////////////////////////////////////////////////////
+//                  DELETE a Volume                            //
+/////////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostDeleteVol(req *DeleteVolReq, sid string) (resp *DeleteVolResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/ReturnToStoragePool", req, &resp)
+    return resp, err
+}
+
+//////////////////////////////////////////////////////////////
+//             REQUEST Structs used for any                 //
+//          masking view deletion on the VMAX3.             //
+//////////////////////////////////////////////////////////////
+
+type DeleteMaskingViewReq struct {
+        DeleteMaskingViewRequestContent DeleteMaskingViewReqContent `json:"content"`
+}
+
+type DeleteMaskingViewReqContent struct {
+        AtType                                  string                              `json:"@type"`
+        DeleteMaskingViewRequestContentPC       DeleteMaskingViewReqContentPC       `json:"ProtocolController"`
+}
+
+type DeleteMaskingViewReqContentPC struct {
+        AtType                  string  `json:"@type"`
+        DeviceID                string  `json:"DeviceID"`
+        CreationClassName       string  `json:"CreationClassName"`
+        SystemName              string  `json:"SystemName"`
+        SystemCreationClassName string  `json:"SystemCreationClassName"`
+}
+
+////////////////////////////////////////////////////////////
+//           RESPONSE Struct used for any                 //
+//        masking view deletion on the VMAX3.             //
+////////////////////////////////////////////////////////////
+
+type DeleteMaskingViewResp struct {
+    Entries []struct {
+        Content struct {
+            AtType       string `json:"@type"`
+            I_parameters struct {
+                I_Job struct {
+                    AtType        string `json:"@type"`
+                    E0_InstanceID string `json:"e0$InstanceID"`
+                    Xmlns_e0      string `json:"xmlns$e0"`
+                } `json:"i$Job"`
+            } `json:"i$parameters"`
+            I_returnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+/////////////////////////////////////////////////////////////////
+//               DELETE a Masking View                         //
+/////////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (resp *DeleteMaskingViewResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/DeleteMaskingView", req, &resp)
+    return resp, err
+}
+
 
 

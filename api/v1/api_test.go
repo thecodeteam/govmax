@@ -125,7 +125,7 @@ func TestPostCreateGroup(*testing.T) {
 	PostGroupRequest := &PostGroupReq{
 		PostGroupRequestContent : PostGroupReqContent{
 			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
-			SG_Name : "TestingSG_" + curTime.Format("Jan-2-2006--15-04-05"),
+			GroupName : "TestingSG_" + curTime.Format("Jan-2-2006--15-04-05"),
 			Type : "4",
 		},
 	}
@@ -396,4 +396,64 @@ func TestRemoveInitiatorFromHG(*testing.T) {
 	}
 
 	fmt.Println(fmt.Sprintf("%+v", rmInit))
+}
+
+func TestPostDeleteGroup(*testing.T) {
+	DeleteGroupRequest := &DeleteGroupReq{
+		DeleteGroupRequestContent : DeleteGroupReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
+			DeleteGroupRequestContentMaskingGroup : DeleteGroupReqContentMaskingGroup{
+				//Change AtType to type of Group and InstanceID to existing name of Group
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_DeviceMaskingGroup",
+   		 		InstanceID : "SYMMETRIX-+-" + testingSID + "-+-Test_SG",
+			},
+		},
+	}
+	deleteGroup, err := smis.PostDeleteGroup(DeleteGroupRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", deleteGroup))
+}
+
+func TestPostDeleteVol(*testing.T) {
+	DeleteVolumeRequest := &DeleteVolReq{
+		DeleteVolRequestContent : DeleteVolReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageConfigurationService",
+			DeleteVolRequestContentElement : DeleteVolReqContentElement{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageVolume",
+                DeviceID : "0001F",
+                CreationClassName : "Symm_StorageVolume",
+                SystemName : "SYMMETRIX-+-" + testingSID,
+                SystemCreationClassName : "Symm_StorageSystem",
+			},
+		},
+	}
+	deleteVol, err := smis.PostDeleteVol(DeleteVolumeRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", deleteVol))
+}
+
+
+func TestPostDeleteMV(*testing.T) {
+	DeleteMVRequest := &DeleteMaskingViewReq{
+		DeleteMaskingViewRequestContent : DeleteMaskingViewReqContent{
+			AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_ControllerConfigurationService",
+			DeleteMaskingViewRequestContentPC : DeleteMaskingViewReqContentPC{
+				AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_LunMaskingView",
+                DeviceID : "Kim_MV",
+                CreationClassName : "Symm_LunMaskingView",
+                SystemName : "SYMMETRIX-+-" + testingSID,
+                SystemCreationClassName : "Symm_StorageSystem",
+			},
+		},
+	}
+
+	deleteMV, err := smis.PostDeleteMaskingView(DeleteMVRequest,testingSID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(fmt.Sprintf("%+v", deleteMV))
 }

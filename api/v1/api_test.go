@@ -5,7 +5,9 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	"time"
+	_"time"
+	_"reflect"
+	_"strings"
 )
 
 var smis *SMIS
@@ -456,4 +458,29 @@ func TestPostDeleteMV(*testing.T) {
 		panic(err)
 	}
 	fmt.Println(fmt.Sprintf("%+v", deleteMV))
+}
+
+func TestPostPortLogins(*testing.T) {
+                
+                PostPortLoginsReq := &PostPortLoggedInReq{
+                                PostPortLoggedInRequestContent : PostPortLoggedInReqContent{
+                                               
+                                                PostPortLoggedInRequestHardwareID : PostPortLoggedInReqHardwareID{
+                                                                AtType : "http://schemas.emc.com/ecom/edaa/root/emc/SE_StorageHardwareID",
+                                                                InstanceID : "10000000C94E5D22",
+                                                },             
+                                                 AtType : "http://schemas.emc.com/ecom/edaa/root/emc/Symm_StorageHardwareIDManagementService",
+                                },
+                }
+				
+				portValues, err := smis.PostPortLogins(PostPortLoginsReq,testingSID)
+				if err != nil {
+                                panic(err)
+                }
+				
+				for i:=0;i< len(portValues);i++{
+					fmt.Println("Port Number:"+ portValues[i].PortNumber +" Director:" +portValues[i].Director + " WWN:"+portValues[i].WWN)
+				}
+			
+                
 }

@@ -3,6 +3,8 @@ package apiv1
 import (
         "io/ioutil"
         "os"
+		"strconv"
+		"strings"
         )
 
 ////////////////////////////////////////////////////////////
@@ -1376,5 +1378,95 @@ func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (
     return resp, err
 }
 
+/////////////////////////////////////////////////////////
+//               REQUEST Structs used for              //
+//        getting Ports logged in, on the VMAX3.       //
+/////////////////////////////////////////////////////////
 
+type PostPortLoggedInReq struct {
+    PostPortLoggedInRequestContent PostPortLoggedInReqContent `json:"content"`
+}
+
+type PostPortLoggedInReqContent struct {
+    PostPortLoggedInRequestHardwareID PostPortLoggedInReqHardwareID `json:"HardwareID"`
+    AtType                            string                        `json:"@type"`
+}
+
+type PostPortLoggedInReqHardwareID struct{
+    AtType           string  `json:"@type"`
+    InstanceID       string  `json: "InstanceID"`
+}
+
+
+/////////////////////////////////////////////////////////
+//               RESPONSE Structs used for             //
+//        getting Ports logged in, on the VMAX3.       //
+/////////////////////////////////////////////////////////
+
+type PostPortLoginResp struct {
+    Entries []struct {
+        Content struct {
+            _type        string `json:"@type"`
+            I_parameters struct {
+                I_TargetEndpoints []map[string] string `json:"i$TargetEndpoints"`
+            } `json:"i$parameters"`
+            I_returnValue int    `json:"i$returnValue"`
+            Xmlns_i       string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type string `json:"content-type"`
+        Links        []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated string `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+type PortValues struct{
+	WWN string
+	PortNumber string
+	Director string
+	}
+				
+///////////////////////////////////////////////////////////////
+//           Getting Ports logged In                         //
+///////////////////////////////////////////////////////////////
+
+func (smis *SMIS) PostPortLogins(req *PostPortLoggedInReq, sid string) (portvalues1 []PortValues,err error){
+    var resp *PostPortLoginResp
+	
+	var wwn string = req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID
+	wwn = "W-+-" + wwn
+	req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID = wwn
+	err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/EMCGetTargetEndpoints", req, &resp)
+  	var portValues []PortValues
+	var length = len(resp.Entries[0].Content.I_parameters.I_TargetEndpoints)
+	for i:= 0; i<length ; i++{
+		var m  map[string] string
+		var name string
+		m = resp.Entries[0].Content.I_parameters.I_TargetEndpoints[i]
+		name = "e"+ strconv.Itoa(i) + "$SystemName";
+		var eSystemName string = m[name]
+		eSystemNameSplit := strings.Split(eSystemName,"-+-")
+		PortAndDirector := strings.Split(eSystemNameSplit[2],"-")
+		portNumber := PortAndDirector[0]
+		director :=PortAndDirector[1]
+		
+		PV :=PortValues{
+			WWN : wwn ,
+			PortNumber : portNumber,
+			Director : director,
+		}
+		portValues = append(portValues,PV)
+	}
+	
+	return portValues, err
+}
 

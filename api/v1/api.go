@@ -3,6 +3,18 @@ package apiv1
 import (
         "io/ioutil"
         "os"
+	"fmt"
+	"net/url"
+	"errors"
+	"strings"
+	"golang.org/x/net/context"
+	"github.com/vmware/govmomi"
+	"github.com/vmware/govmomi/object"
+	"github.com/vmware/govmomi/vim25/mo"
+	"github.com/vmware/govmomi/vim25/types"
+	"github.com/vmware/govmomi/property"
+	"github.com/vmware/govmomi/vim25/methods"
+	"github.com/vmware/govmomi/find"
         )
 
 ////////////////////////////////////////////////////////////
@@ -1377,4 +1389,277 @@ func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (
 }
 
 
+//////////////////////////////////////////////////////////////////
+//          Connects to VM Host - Either ESXi or vCenter        //
+//////////////////////////////////////////////////////////////////
 
+func connectToVMHost(insecure bool, hostURL_param, user, pass string) (cli *govmomi.Client, ctx context.Context, err error){
+
+	// Create context to store connection in
+	ctx, _ = context.WithCancel(context.Background())
+
+	// Setup URL with User/Pass/Schema
+	hostURL, err := url.Parse("https://" + hostURL_param + "/sdk")
+	hostURL.User = url.UserPassword(user,pass)
+
+	// Open connection to Host and create Binding Provider (This does the actual communication between us and the Vcenter/ESXi Host)
+	cli, err = govmomi.NewClient(ctx, hostURL, insecure)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return cli, ctx, nil
+}
+
+
+//////////////////////////////////////////////////////////////////
+//   Determines what type of Host Instance we are connected to. //
+//       Returns "VirtualCenter" for a VCenter Instance         //
+// 	       		        or                              //
+//               "HostAgent" For ESX/ESXi Instance              //
+//////////////////////////////////////////////////////////////////
+
+func typeOfVMHost(ctx context.Context, curClient *govmomi.Client) (apiType string){
+
+	serviceContent := curClient.ServiceContent
+	apiType = serviceContent.About.ApiType
+	return apiType
+}
+
+////////////////////////////////////////////////////////////////////
+//              Returns if Eth0 MAC Address of VM                 //
+////////////////////////////////////////////////////////////////////
+
+func getMACAddressOfVM(curClient *govmomi.Client, vm *object.VirtualMachine) (macAddress string, err error){
+
+	vmDeviceList, err := vm.Device(context.TODO())
+	if err != nil {
+		return "", errors.New("Cannot read VM VirtualDevices")
+	}
+        return vmDeviceList.PrimaryMacAddress(), nil
+}
+
+///////////////////////////////////////////////////////////////////
+//     Find the target VM in Host with specified MAC Address     //
+//    Using MAC address to identify VM since that is the only    //
+//       property known to the VM that its host also knows       //
+//                   WITHOUT VMWARE tools installed.             //
+///////////////////////////////////////////////////////////////////
+
+func findVMwithMAC(ctx context.Context, curClient *govmomi.Client, targetMACAddress string)(vm *object.VirtualMachine, err error){
+
+	targetMACAddress = strings.ToUpper(targetMACAddress)
+	f := find.NewFinder(curClient.Client, true)
+        allDatacenters, err := f.DatacenterList(ctx, "*")
+        if err != nil {
+                return nil, errors.New("Could not get List of Datacenters")
+        }
+
+        for _, datacenter := range allDatacenters {
+                f.SetDatacenter(datacenter)
+                allVMs, err := f.VirtualMachineList(ctx, "*")
+                if err != nil {
+                        return nil, errors.New("Could not get List of VMs")
+                }
+                for _, vm := range allVMs {
+                        VM_MAC, err := getMACAddressOfVM(curClient, vm)
+			VM_MAC = strings.ToUpper(VM_MAC)
+                        if err != nil {
+				return nil, errors.New("Could not get MAC Address of VM")
+                        }
+                        if VM_MAC == targetMACAddress {
+				return vm, nil
+			}
+                }
+        }
+	return nil, errors.New("Could not find VM with specified MAC Address of " + targetMACAddress)
+}
+
+
+///////////////////////////////////////////////////////////////////
+//     Find all possible Hosts the VM could move to (vMotion)    //
+//                    or is currently running on.                //
+//        **Need to implement when running on single Host**      //
+///////////////////////////////////////////////////////////////////
+
+func findAllPossibleHostsForVM(ctx context.Context, curClient *govmomi.Client, targetVM *object.VirtualMachine)(hosts []*object.HostSystem, err error){
+	targetResourcePool, err := targetVM.ResourcePool(ctx)
+	if err != nil {
+		return nil, errors.New("Error with finding Resource Pool of VM")
+	}
+	var resourcePoolProp mo.ResourcePool
+	err = targetResourcePool.Properties(ctx, targetResourcePool.Reference(), []string{"owner"}, &resourcePoolProp)
+
+	if err != nil {
+		return nil, errors.New("Error with finding Owner of Resource Pool")
+	}
+
+	typeOfOwningResource := resourcePoolProp.Owner.Type
+	//Scenario in which VM is apart of a Cluster (Not tied to 1 ESXi host) - VMware DRS
+	if typeOfOwningResource == "ClusterComputeResource"{
+		cluster := object.NewClusterComputeResource(curClient.Client, resourcePoolProp.Owner)
+		var clusterProp mo.ClusterComputeResource
+		err = cluster.Properties(ctx, cluster.Reference(), []string{"host"}, &clusterProp)
+		if err != nil{
+			return nil, errors.New("Error with finding Hosts of Cluster")
+		}
+
+		//convert Managed Object References into actual host_sytem objects to return
+		var hosts []*object.HostSystem
+		for _, host := range clusterProp.Host{
+			newHost := object.NewHostSystem(curClient.Client, host)
+			hosts = append(hosts, newHost)
+		}
+		return hosts, nil
+	}else {
+		return nil, errors.New("Looks like you are on a single/Non-Clustered host and we havent gotten to this yet!!")
+	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////
+//     Find the WWNs of the HBA's from the Host System(s) that   //
+//                    the VM is running on.                      //
+///////////////////////////////////////////////////////////////////
+
+func getHBAWWNFromHosts(ctx context.Context, curClient *govmomi.Client, hosts []*object.HostSystem)(hostsWWN []string, err error){
+	for _, host := range hosts{
+		hostConfigManager := host.ConfigManager()
+
+		var hostConfigManagerProp mo.HostSystem
+		err := hostConfigManager.Properties(ctx, hostConfigManager.Reference(), []string{"configManager.storageSystem"}, &hostConfigManagerProp)
+		if err != nil {
+			return nil, errors.New("Error getting properties of Host Configuration Manager")
+		}
+		var hostStorageSystemProp mo.HostStorageSystem
+		err = property.DefaultCollector(curClient.Client).RetrieveOne(ctx, *hostConfigManagerProp.ConfigManager.StorageSystem,[]string{"storageDeviceInfo"}, &hostStorageSystemProp)
+		if err != nil {
+			return nil, err
+		}
+		for _ , HBA := range hostStorageSystemProp.StorageDeviceInfo.HostBusAdapter {
+			HBA, isFC := HBA.(*types.HostFibreChannelHba)
+			if(isFC){
+				hostsWWN = append(hostsWWN, fmt.Sprintf("%016X", HBA.NodeWorldWideName))
+			}
+		}
+	}
+	return hostsWWN, nil
+}
+
+
+///////////////////////////////////////////////////////////////////
+//                           Add RDM to VM.                      //
+//               RDM String Passed has to be a Device WWN.       //
+///////////////////////////////////////////////////////////////////
+
+func addRDMToVM(ctx context.Context, curClient *govmomi.Client, vm *object.VirtualMachine, deviceNAA string)(err error) {
+
+	var VM_withProp mo.VirtualMachine
+	err = vm.Properties(ctx, vm.Reference(), []string{"environmentBrowser"}, &VM_withProp)
+	if err != nil {
+		return errors.New(fmt.Sprintf("Error finding Environment Browser for VM - %S", err))
+	}
+
+	//Query VM To Find Devices avilable for attaching to VM
+	var queryConfigRequest types.QueryConfigTarget
+	queryConfigRequest.This = VM_withProp.EnvironmentBrowser
+	queryConfigResp, err := methods.QueryConfigTarget(ctx, curClient.Client, &queryConfigRequest)
+	if err != nil {
+		return errors.New(fmt.Sprintf("Error Obtaining Configuration Options of Host System that VM is On - %S", err))
+	}
+	vmConfigOptions := *queryConfigResp.Returnval
+
+
+	//Build new Virtual Device to add to VM from list of avilable devices found from our query
+	for _, ScsiDisk := range vmConfigOptions.ScsiDisk {
+		if strings.Contains(ScsiDisk.Disk.CanonicalName,deviceNAA) {
+			var rdmBacking types.VirtualDiskRawDiskMappingVer1BackingInfo
+			rdmBacking.FileName = ""
+			rdmBacking.DiskMode = "independent_persistent"
+			rdmBacking.CompatibilityMode = "physicalMode"
+			rdmBacking.DeviceName = ScsiDisk.Disk.DeviceName
+			for _, descriptor := range ScsiDisk.Disk.Descriptor {
+				if string([]rune(descriptor.Id)[:4]) == "vml." {
+					rdmBacking.LunUuid = descriptor.Id
+					break
+				}
+			}
+			var rdmDisk types.VirtualDisk
+			rdmDisk.Backing = &rdmBacking
+			//Deal with finding or creating the correct SCSI Controller
+			//Assign the controller to the new RDM in creation
+			rdmDisk.ControllerKey = 99999
+			rdmDisk.CapacityInKB = 1024
+			virtualDeviceList, err := vm.Device(ctx)
+			if err != nil {
+				return errors.New(fmt.Sprintf("Error Obtaining List of Devices Attached to VM - %s", err))
+			}
+			var c types.VirtualSCSIController
+			scsiControllers := virtualDeviceList.SelectByType(&c)
+			scsiControlledDevicesNums := new([]int)
+			for _, scsiDevice := range scsiControllers {
+					scsiDevice := scsiDevice.(types.BaseVirtualSCSIController).GetVirtualSCSIController()
+					//fmt.Printf("%T :::  %+v \n %T ::: %+v",scsiDevice, scsiDevice,scsiControllers, scsiControllers)
+					if len(scsiDevice.VirtualController.Device) < 15 {
+						rdmDisk.ControllerKey = scsiDevice.VirtualController.Key
+						scsiControlledDevicesNums = &scsiDevice.VirtualController.Device
+						break
+					}
+			}
+			//Scenario in which a new SCSI Controller needs to be created
+			if rdmDisk.ControllerKey == 99999{
+				//Maximum number of SCSI Controllers per VM is 4 in ESXi 5.5 so fail if capped otherwise create new SCSI Controller and refresh the VM
+				if len(scsiControllers) > 3 {
+					return errors.New("The VM you are attempting to attach storage to is capped at it's maximum number of SCSI Targets (60 Targets)")
+				} else {
+					//create SCSI controller then assign controllerkey
+					var newScsiController types.ParaVirtualSCSIController
+					newScsiController.SharedBus = types.VirtualSCSISharingNoSharing
+					err = vm.AddDevice(ctx, &newScsiController)
+					if err != nil {
+						return errors.New(fmt.Sprintf("Error creating SCSI Controller for RDM - %s", err))
+					}
+		                        virtualDeviceList, err = vm.Device(ctx)
+					if err != nil {
+						return errors.New(fmt.Sprintf("error Obtaining List of Devices Attached to VM - %s", err))
+					}
+		                        scsiControllers = virtualDeviceList.SelectByType(&c)
+					for _, scsiDevice := range scsiControllers {
+						scsiDevice := scsiDevice.(types.BaseVirtualSCSIController).GetVirtualSCSIController()
+						if len(scsiDevice.VirtualController.Device) < 16 {
+							rdmDisk.ControllerKey = scsiDevice.VirtualController.Key
+							scsiControlledDevicesNums = &scsiDevice.VirtualController.Device
+							break
+			                        }
+		                        }
+
+
+				}
+			}
+			//Deal with finding the correct SCSI Bus on the Controller just selected (16 per controller)
+			unitNumbers := make([]int, 16)
+			for _, deviceNum := range  *scsiControlledDevicesNums{
+				for _, device := range virtualDeviceList{
+					device := device.(types.BaseVirtualDevice).GetVirtualDevice()
+					if deviceNum == device.Key {
+						unitNumbers[device.UnitNumber] = 1
+					}
+				}
+			}
+			for i, unitNumber := range unitNumbers {
+				if unitNumber != 1 {
+					rdmDisk.UnitNumber = i
+					break
+				}
+			}
+			//Add RDM to VM
+			err = vm.AddDevice(ctx, &rdmDisk)
+			if err != nil {
+				return errors.New(fmt.Sprintf("Error adding device %+v \n Logged Item:  %s", rdmDisk, err))
+			}
+		return nil
+		}
+	}
+	return errors.New("Error adding RDM to VM")
+}

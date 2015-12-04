@@ -3,8 +3,9 @@ package apiv1
 import (
         "io/ioutil"
         "os"
-		"strconv"
-		"strings"
+        "fmt"
+        "strconv"
+        "strings"
         )
 
 ////////////////////////////////////////////////////////////
@@ -347,7 +348,7 @@ func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error)
 type GetHostGroupsResp struct {
     Entries []struct {
         Content struct {
-            AtType                           string `json:"@type"`
+            AtType                          string `json:"@type"`
             I_Caption                       string `json:"i$Caption"`
             I_ConsistentLogicalUnitNumber   bool   `json:"i$ConsistentLogicalUnitNumber"`
             I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
@@ -392,10 +393,10 @@ func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error)
 //        list of storage volumes on the VMAX3.           //
 ////////////////////////////////////////////////////////////
 
-type GetStorageVolumesResp struct {
+type GetVolumesResp struct {
     Entries []struct {
         Content struct {
-            AtType                               string          `json:"@type"`
+            AtType                              string          `json:"@type"`
             I_Access                            int             `json:"i$Access"`
             I_BlockSize                         int             `json:"i$BlockSize"`
             I_Caption                           string          `json:"i$Caption"`
@@ -483,10 +484,104 @@ type GetStorageVolumesResp struct {
 //            GET a list of Storage Volumes                  //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetStorageVolumes(sid string) (resp *GetStorageVolumesResp, err error){
+func (smis *SMIS) GetVolumes(sid string) (resp *GetVolumesResp, err error){
     err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
     return resp,err
 }
+
+///////////////////////////////////////////////////////////
+//            GET a Storage Volume by ID                 //
+///////////////////////////////////////////////////////////
+
+func (smis *SMIS) GetVolumeByID(sid string, volumeID string) (resp *GetVolumesResp, err error){
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageVolume/CreationClassName::Symm_StorageVolume,DeviceID::" + volumeID + ",SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid, nil, &resp)
+    return resp,err
+}
+
+///////////////////////////////////////////////////////////
+//            GET a Storage Volume by Name               //
+///////////////////////////////////////////////////////////
+
+func (smis *SMIS) GetVolumeByName(sid string, volumeName string) (resp *GetVolumesResp, err error){
+    err = smis.query("GET",`/ecom/edaa/root/emc/types/CIM_StorageVolume/instances?filter=SystemName lk "` + sid + `" and ElementName lk "` + volumeName + `"`, nil, &resp)
+    return resp,err
+}
+
+////////////////////////////////////////////////////////////
+//            RESPONSE Struct used for                    //
+//              getting a Job Status                      //
+////////////////////////////////////////////////////////////
+
+type GetJobStatusResp struct {
+    Entries []struct {
+        Content struct {
+            AtType                              string          `json:"@type"`
+            I_DeleteOnCompletion                bool            `json:"i$DeleteOnCompletion"`
+            I_Description                       string          `json:"i$Description"`
+            I_ElapsedTime                       string          `json:"i$ElapsedTime"`
+            I_ErrorCode                         int             `json:"i$ErrorCode"`
+            I_ErrorDescription                  string          `json:"i$ErrorDescription"`
+            I_HealthState                       int             `json:"i$HealthState"`
+            I_JobRunTimes                       int             `json:"i$JobRunTimes"`
+            I_JobState                          int             `json:"i$JobState"`
+            I_JobStatus                         string          `json:"i$JobStatus"`
+            I_LocalOrUtcTime                    int             `json:"i$LocalOrUtcTime"`
+            I_Name                              string          `json:"i$Name"`
+            I_OperationalStatus                 []int           `json:"i$OperationalStatus"`
+            I_Owner                             string          `json:"i$Owner"`           
+            I_PercentComplete                   int             `json:"i$PercentComplete"`
+            I_StartTime                         string          `json:"i$StartTime"`
+            I_Status                            string          `json:"i$Status"`
+            I_StatusDescriptions                []string        `json:"i$StatusDescriptions"`
+            I_TimeBeforeRemoval                 string          `json:"i$TimeBeforeRemoval"`
+            I_TimeOfLastStateChange             string          `json:"i$TimeOfLastStateChange"`
+            I_TimeSubmitted                     string          `json:"i$TimeSubmitted"`
+            I_UntilTime                         string          `json:"i$UntilTime"`
+            Links []struct {
+                Href string `json:"href"`
+                Rel  string `json:"rel"`
+            } `json:"links"`
+            Xmlns_i string `json:"xmlns$i"`
+        } `json:"content"`
+        Content_type    string      `json:"content-type"`
+        Gd_etag         string      `json:"gd$etag"`
+        Links           []struct {
+            Href string `json:"href"`
+            Rel  string `json:"rel"`
+        } `json:"links"`
+        Updated         string      `json:"updated"`
+    } `json:"entries"`
+    ID    string `json:"id"`
+    Links []struct {
+        Href string `json:"href"`
+        Rel  string `json:"rel"`
+    } `json:"links"`
+    Updated  string `json:"updated"`
+    Xmlns_gd string `json:"xmlns$gd"`
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//      GET a Job Status                                                                        //
+//                                                                                              //
+//  2 - New: job has not been started                                                           // 
+//  3 - Starting: job is moving into running state                                              //
+//  4 - Running: job is running                                                                 //
+//  5 - Suspended: job is stopped, but can be restarted                                         //
+//  6 - Shutting Down: job is moving to an completed/terminated/killed state                    //
+//  7 - Completed: job has been completed normally                                              //
+//  8 - Terminated: job has been stopped by a terminate state change request                    //
+//  9 - Killed: job has stopped by a kill state change request                                  //
+//  10 - Exception: job is in an abnormal state due to an error condition                       //
+//  11 - Service: job is in a vendor-specific state that supports problem discovery/resolution  //
+//  12 - Query Pending: job is waiting for a client to resolve a query                          //
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (smis *SMIS) GetJobStatus(instanceID string) (resp *GetJobStatusResp, JobStatus int, err error){
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + instanceID, nil, &resp)
+    JobStatus = resp.Entries[0].Content.I_JobState 
+    return resp,JobStatus,err
+}
+
 
 //////////////////////////////////////
 //    REQUEST Structs used for      //
@@ -541,13 +636,24 @@ type PostVolumesResp struct {
     Xmlns_gd string `json:"xmlns$gd"`
 }
 
-///////////////////////////////////////////////////////////////
-//                CREATE a Storage Volume                    //
-///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+//              CREATE a Storage Volume                  //
+//     and check for Volume Creation Completion          //
+///////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp *PostVolumesResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateOrModifyElementFromStoragePool", req, &resp)
-    return resp,err
+func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp1 *PostVolumesResp, resp2 *GetJobStatusResp, err error){
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateOrModifyElementFromStoragePool", req, &resp1)
+   
+    err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
+    JobStatus := resp2.Entries[0].Content.I_JobState
+    for (JobStatus == 2 || JobStatus == 3 || JobStatus == 4 || JobStatus == 5 || JobStatus == 6 || JobStatus == 12){
+        err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
+        JobStatus = resp2.Entries[0].Content.I_JobState
+    }
+    if (JobStatus != 7) {
+        fmt.Println("Error: Volume creation incomplete") 
+    }
+    return resp1,resp2,err
 }
 
 //////////////////////////////////////
@@ -627,7 +733,7 @@ func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGrou
 type GetStoragePoolSettingsResp struct {
     Entries []struct {
         Content struct {
-            _type                            string `json:"@type"`
+            AtType                           string `json:"@type"`
             I_Changeable                     bool   `json:"i$Changeable"`
             I_ChangeableType                 int    `json:"i$ChangeableType"`
             I_CompressedElement              bool   `json:"i$CompressedElement"`
@@ -638,7 +744,7 @@ type GetStoragePoolSettingsResp struct {
             I_DeltaReservationGoal           int    `json:"i$DeltaReservationGoal"`
             I_DeltaReservationMax            int    `json:"i$DeltaReservationMax"`
             I_DeltaReservationMin            int    `json:"i$DeltaReservationMin"`
-            I_ElementName            string `json:"i$ElementName"`
+            I_ElementName                    string `json:"i$ElementName"`
             I_EMCApproxAverageResponseTime   float64 `json:"i$EMCApproxAverageResponseTime"`
             I_EMCDeduplicationRate           int    `json:"i$EMCDeduplicationRate"`
             I_EMCEnableDIF                   int    `json:"i$EMCEnableDIF"`
@@ -988,7 +1094,7 @@ type PostPortToPGReq struct {
 }
 
 type PostPortToPGReqContent struct {
-    AtType                               string                               `json:"@type"`
+    AtType                              string                               `json:"@type"`
     PostPortToPGRequestContentMG        PostPortToPGReqContentMG            `json:"MaskingGroup"`
     PostPortToPGRequestContentMember    []PostPortToPGReqContentMember      `json:"Members"`
 }
@@ -1351,7 +1457,7 @@ type DeleteMaskingViewResp struct {
                 } `json:"i$Job"`
             } `json:"i$parameters"`
             I_returnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
+        Xmlns_i       string `json:"xmlns$i"`
         } `json:"content"`
         Content_type string `json:"content-type"`
         Links        []struct {
@@ -1377,6 +1483,7 @@ func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (
     err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/DeleteMaskingView", req, &resp)
     return resp, err
 }
+
 
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
@@ -1430,43 +1537,42 @@ type PostPortLoginResp struct {
 }
 
 type PortValues struct{
-	WWN string
-	PortNumber string
-	Director string
-	}
-				
+    WWN string
+    PortNumber string
+    Director string
+    }
+                
 ///////////////////////////////////////////////////////////////
-//           Getting Ports logged In                         //
+//           Getting Ports Logged In                         //
 ///////////////////////////////////////////////////////////////
 
 func (smis *SMIS) PostPortLogins(req *PostPortLoggedInReq, sid string) (portvalues1 []PortValues,err error){
     var resp *PostPortLoginResp
-	
-	var wwn string = req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID
-	wwn = "W-+-" + wwn
-	req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID = wwn
-	err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/EMCGetTargetEndpoints", req, &resp)
-  	var portValues []PortValues
-	var length = len(resp.Entries[0].Content.I_parameters.I_TargetEndpoints)
-	for i:= 0; i<length ; i++{
-		var m  map[string] string
-		var name string
-		m = resp.Entries[0].Content.I_parameters.I_TargetEndpoints[i]
-		name = "e"+ strconv.Itoa(i) + "$SystemName";
-		var eSystemName string = m[name]
-		eSystemNameSplit := strings.Split(eSystemName,"-+-")
-		PortAndDirector := strings.Split(eSystemNameSplit[2],"-")
-		portNumber := PortAndDirector[0]
-		director :=PortAndDirector[1]
-		
-		PV :=PortValues{
-			WWN : wwn ,
-			PortNumber : portNumber,
-			Director : director,
-		}
-		portValues = append(portValues,PV)
-	}
-	
-	return portValues, err
+    
+    var wwn string = req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID
+    wwn = "W-+-" + wwn
+    req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID = wwn
+    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/EMCGetTargetEndpoints", req, &resp)
+    var portValues []PortValues
+    var length = len(resp.Entries[0].Content.I_parameters.I_TargetEndpoints)
+    for i:= 0; i<length ; i++{
+        var m  map[string] string
+        var name string
+        m = resp.Entries[0].Content.I_parameters.I_TargetEndpoints[i]
+        name = "e"+ strconv.Itoa(i) + "$SystemName";
+        var eSystemName string = m[name]
+        eSystemNameSplit := strings.Split(eSystemName,"-+-")
+        PortAndDirector := strings.Split(eSystemNameSplit[2],"-")
+        portNumber := PortAndDirector[0]
+        director :=PortAndDirector[1]
+        
+        PV :=PortValues{
+            WWN : wwn ,
+            PortNumber : portNumber,
+            Director : director,
+        }
+        portValues = append(portValues,PV)
+    }
+    
+    return portValues, err
 }
-

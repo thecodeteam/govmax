@@ -1,22 +1,12 @@
 package apiv1
 
 import (
-        "io/ioutil"
-        "os"
 	"fmt"
-	"net/url"
-	"errors"
-	"strings"
+	"io/ioutil"
+	"os"
 	"strconv"
-	"golang.org/x/net/context"
-	"github.com/vmware/govmomi"
-	"github.com/vmware/govmomi/object"
-	"github.com/vmware/govmomi/vim25/mo"
-	"github.com/vmware/govmomi/vim25/types"
-	"github.com/vmware/govmomi/property"
-	"github.com/vmware/govmomi/vim25/methods"
-	"github.com/vmware/govmomi/find"
-        )
+	"strings"
+)
 
 ////////////////////////////////////////////////////////////
 //             RESPONSE Struct used for                   //
@@ -24,92 +14,92 @@ import (
 ////////////////////////////////////////////////////////////
 
 type GetStorageArraysResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                         string      `json:"@type"`
-            I_Caption                      string      `json:"i$Caption"`
-            I_CreationClassName            string      `json:"i$CreationClassName"`
-            I_Dedicated                    []int       `json:"i$Dedicated"`
-            I_Description                  string      `json:"i$Description"`
-            I_EMCAutoMetaConfiguration     []int       `json:"i$EMCAutoMetaConfiguration"`
-            I_EMCAutoMetaEnabled           bool        `json:"i$EMCAutoMetaEnabled"`
-            I_EMCAutoMetaMemberSize        int         `json:"i$EMCAutoMetaMemberSize"`
-            I_EMCAutoMetaMinSize           int         `json:"i$EMCAutoMetaMinSize"`
-            I_EMCBSPElementType            int         `json:"i$EMCBSPElementType"`
-            I_EMCBSPInstanceID             string      `json:"i$EMCBSPInstanceID"`
-            I_EMCCacheHiWatermark          int         `json:"i$EMCCacheHiWatermark"`
-            I_EMCCacheLoWatermark          int         `json:"i$EMCCacheLoWatermark"`
-            I_EMCEnclosureCount            int         `json:"i$EMCEnclosureCount"`
-            I_EMCLastSyncTime              string      `json:"i$EMCLastSyncTime"`
-            I_EMCLastSyncType              []int       `json:"i$EMCLastSyncType"`
-            I_EMCLastSyncTypeDesc          []string    `json:"i$EMCLastSyncTypeDesc"`
-            I_EMCLicenseActivationType     []int       `json:"i$EMCLicenseActivationType"`
-            I_EMCLicenseCapacityType       []int       `json:"i$EMCLicenseCapacityType"`
-            I_EMCLicenseConversionFactor   []int       `json:"i$EMCLicenseConversionFactor"`
-            I_EMCLicenseExpirationDate     []string    `json:"i$EMCLicenseExpirationDate"`
-            I_EMCLicenseFeatureName        []string    `json:"i$EMCLicenseFeatureName"`
-            I_EMCLicenseStatus             []int       `json:"i$EMCLicenseStatus"`
-            I_EMCLocality                  int         `json:"i$EMCLocality"`
-            I_EMCMaskingEnabled            bool        `json:"i$EMCMaskingEnabled"`
-            I_EMCMemorySize                int         `json:"i$EMCMemorySize"`
-            I_EMCNonSataActualCapacity     []int       `json:"i$EMCNonSataActualCapacity"`
-            I_EMCNonSataLicenseCapacity    []int       `json:"i$EMCNonSataLicenseCapacity"`
-            I_EMCNumberOfDisks             int         `json:"i$EMCNumberOfDisks"`
-            I_EMCNumberOfUnconfiguredDisks int         `json:"i$EMCNumberOfUnconfiguredDisks"`
-            I_EMCNumberofFrontEndPorts     int         `json:"i$EMCNumberofFrontEndPorts"`
-            I_EMCNumberofSymDevs           int         `json:"i$EMCNumberofSymDevs"`
-            I_EMCReadCacheSize             int         `json:"i$EMCReadCacheSize"`
-            I_EMCSataActualCapacity        []int       `json:"i$EMCSataActualCapacity"`
-            I_EMCSataLicenseCapacity       []int       `json:"i$EMCSataLicenseCapacity"`
-            I_EMCUpTime                    string      `json:"i$EMCUpTime"`
-            I_EMCWriteCacheSize            int         `json:"i$EMCWriteCacheSize"`
-            I_EMCisDARE                    bool        `json:"i$EMCisDARE"`
-            I_ElementName                  string      `json:"i$ElementName"`
-            I_EnabledDefault               int         `json:"i$EnabledDefault"`
-            I_EnabledState                 int         `json:"i$EnabledState"`
-            I_HealthState                  int         `json:"i$HealthState"`
-            I_IdentifyingDescriptions      []string    `json:"i$IdentifyingDescriptions"`
-            I_Name                         string      `json:"i$Name"`
-            I_NameFormat                   string      `json:"i$NameFormat"`
-            I_OperationalStatus            []int       `json:"i$OperationalStatus"`
-            I_OtherIdentifyingInfo         []string    `json:"i$OtherIdentifyingInfo"`
-            I_PowerManagementCapabilities  []int       `json:"i$PowerManagementCapabilities"`
-            I_PrimaryOwnerContact          interface{} `json:"i$PrimaryOwnerContact"`
-            I_PrimaryOwnerName             interface{} `json:"i$PrimaryOwnerName"`
-            I_RequestedState               int         `json:"i$RequestedState"`
-            I_ResetCapability              int         `json:"i$ResetCapability"`
-            I_StatusDescriptions           []string    `json:"i$StatusDescriptions"`
-            I_TransitioningToState         int         `json:"i$TransitioningToState"`
-            Links                          []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                         string      `json:"@type"`
+			I_Caption                      string      `json:"i$Caption"`
+			I_CreationClassName            string      `json:"i$CreationClassName"`
+			I_Dedicated                    []int       `json:"i$Dedicated"`
+			I_Description                  string      `json:"i$Description"`
+			I_EMCAutoMetaConfiguration     []int       `json:"i$EMCAutoMetaConfiguration"`
+			I_EMCAutoMetaEnabled           bool        `json:"i$EMCAutoMetaEnabled"`
+			I_EMCAutoMetaMemberSize        int         `json:"i$EMCAutoMetaMemberSize"`
+			I_EMCAutoMetaMinSize           int         `json:"i$EMCAutoMetaMinSize"`
+			I_EMCBSPElementType            int         `json:"i$EMCBSPElementType"`
+			I_EMCBSPInstanceID             string      `json:"i$EMCBSPInstanceID"`
+			I_EMCCacheHiWatermark          int         `json:"i$EMCCacheHiWatermark"`
+			I_EMCCacheLoWatermark          int         `json:"i$EMCCacheLoWatermark"`
+			I_EMCEnclosureCount            int         `json:"i$EMCEnclosureCount"`
+			I_EMCLastSyncTime              string      `json:"i$EMCLastSyncTime"`
+			I_EMCLastSyncType              []int       `json:"i$EMCLastSyncType"`
+			I_EMCLastSyncTypeDesc          []string    `json:"i$EMCLastSyncTypeDesc"`
+			I_EMCLicenseActivationType     []int       `json:"i$EMCLicenseActivationType"`
+			I_EMCLicenseCapacityType       []int       `json:"i$EMCLicenseCapacityType"`
+			I_EMCLicenseConversionFactor   []int       `json:"i$EMCLicenseConversionFactor"`
+			I_EMCLicenseExpirationDate     []string    `json:"i$EMCLicenseExpirationDate"`
+			I_EMCLicenseFeatureName        []string    `json:"i$EMCLicenseFeatureName"`
+			I_EMCLicenseStatus             []int       `json:"i$EMCLicenseStatus"`
+			I_EMCLocality                  int         `json:"i$EMCLocality"`
+			I_EMCMaskingEnabled            bool        `json:"i$EMCMaskingEnabled"`
+			I_EMCMemorySize                int         `json:"i$EMCMemorySize"`
+			I_EMCNonSataActualCapacity     []int       `json:"i$EMCNonSataActualCapacity"`
+			I_EMCNonSataLicenseCapacity    []int       `json:"i$EMCNonSataLicenseCapacity"`
+			I_EMCNumberOfDisks             int         `json:"i$EMCNumberOfDisks"`
+			I_EMCNumberOfUnconfiguredDisks int         `json:"i$EMCNumberOfUnconfiguredDisks"`
+			I_EMCNumberofFrontEndPorts     int         `json:"i$EMCNumberofFrontEndPorts"`
+			I_EMCNumberofSymDevs           int         `json:"i$EMCNumberofSymDevs"`
+			I_EMCReadCacheSize             int         `json:"i$EMCReadCacheSize"`
+			I_EMCSataActualCapacity        []int       `json:"i$EMCSataActualCapacity"`
+			I_EMCSataLicenseCapacity       []int       `json:"i$EMCSataLicenseCapacity"`
+			I_EMCUpTime                    string      `json:"i$EMCUpTime"`
+			I_EMCWriteCacheSize            int         `json:"i$EMCWriteCacheSize"`
+			I_EMCisDARE                    bool        `json:"i$EMCisDARE"`
+			I_ElementName                  string      `json:"i$ElementName"`
+			I_EnabledDefault               int         `json:"i$EnabledDefault"`
+			I_EnabledState                 int         `json:"i$EnabledState"`
+			I_HealthState                  int         `json:"i$HealthState"`
+			I_IdentifyingDescriptions      []string    `json:"i$IdentifyingDescriptions"`
+			I_Name                         string      `json:"i$Name"`
+			I_NameFormat                   string      `json:"i$NameFormat"`
+			I_OperationalStatus            []int       `json:"i$OperationalStatus"`
+			I_OtherIdentifyingInfo         []string    `json:"i$OtherIdentifyingInfo"`
+			I_PowerManagementCapabilities  []int       `json:"i$PowerManagementCapabilities"`
+			I_PrimaryOwnerContact          interface{} `json:"i$PrimaryOwnerContact"`
+			I_PrimaryOwnerName             interface{} `json:"i$PrimaryOwnerName"`
+			I_RequestedState               int         `json:"i$RequestedState"`
+			I_ResetCapability              int         `json:"i$ResetCapability"`
+			I_StatusDescriptions           []string    `json:"i$StatusDescriptions"`
+			I_TransitioningToState         int         `json:"i$TransitioningToState"`
+			Links                          []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //            GET a list of Storage Arrays                   //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetStorageArrays() (resp *GetStorageArraysResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/types/Symm_StorageSystem/instances", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetStorageArrays() (resp *GetStorageArraysResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/types/Symm_StorageSystem/instances", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -117,71 +107,71 @@ func (smis *SMIS) GetStorageArrays() (resp *GetStorageArraysResp, err error){
 //        list of storage pools on the VMAX3.             //
 ////////////////////////////////////////////////////////////
 
-type GetStoragePoolsResp  struct {
-    Entries []struct {
-        Content struct {
-            AtType                        string        `json:"@type"`
-            I_ClientSettableUsage         []interface{} `json:"i$ClientSettableUsage"`
-            I_ConsumedResourceUnits       string        `json:"i$ConsumedResourceUnits"`
-            I_Description                 interface{}   `json:"i$Description"`
-            I_EMCCanBeUsedForRemoteMirror bool          `json:"i$EMCCanBeUsedForRemoteMirror"`
-            I_EMCDataFormat               string        `json:"i$EMCDataFormat"`
-            I_EMCDefaultSRPforFBAvolumes  bool          `json:"i$EMCDefaultSRPforFBAvolumes"`
-            I_EMCDiskDriveType            string        `json:"i$EMCDiskDriveType"`
-            I_EMCIsBound                  bool          `json:"i$EMCIsBound"`
-            I_EMCLocality                 []int         `json:"i$EMCLocality"`
-            I_EMCOversubscribedCapacity   int           `json:"i$EMCOversubscribedCapacity"`
-            I_EMCPercentReservedCapacity  int           `json:"i$EMCPercentReservedCapacity"`
-            I_EMCPercentSubscribed        int           `json:"i$EMCPercentSubscribed"`
-            I_EMCPercentageUsed           int           `json:"i$EMCPercentageUsed"`
-            I_EMCRemoteMirrorSpace        int           `json:"i$EMCRemoteMirrorSpace"`
-            I_EMCSnapshotSpace            int           `json:"i$EMCSnapshotSpace"`
-            I_EMCSubscribedCapacity       int           `json:"i$EMCSubscribedCapacity"`
-            I_ElementName                 string        `json:"i$ElementName"`
-            I_ElementsShareSpace          bool          `json:"i$ElementsShareSpace"`
-            I_HealthState                 int           `json:"i$HealthState"`
-            I_InstanceID                  string        `json:"i$InstanceID"`
-            I_LowSpaceWarningThreshold    int           `json:"i$LowSpaceWarningThreshold"`
-            I_OperationalStatus           []int         `json:"i$OperationalStatus"`
-            I_PoolID                      string        `json:"i$PoolID"`
-            I_Primordial                  bool          `json:"i$Primordial"`
-            I_RemainingManagedSpace       int           `json:"i$RemainingManagedSpace"`
-            I_SpaceLimit                  int           `json:"i$SpaceLimit"`
-            I_SpaceLimitDetermination     int           `json:"i$SpaceLimitDetermination"`
-            I_StatusDescriptions          []string      `json:"i$StatusDescriptions"`
-            I_ThinProvisionMetaDataSpace  int           `json:"i$ThinProvisionMetaDataSpace"`
-            I_TotalManagedSpace           int           `json:"i$TotalManagedSpace"`
-            I_Usage                       int           `json:"i$Usage"`
-            Links                         []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+type GetStoragePoolsResp struct {
+	Entries []struct {
+		Content struct {
+			AtType                        string        `json:"@type"`
+			I_ClientSettableUsage         []interface{} `json:"i$ClientSettableUsage"`
+			I_ConsumedResourceUnits       string        `json:"i$ConsumedResourceUnits"`
+			I_Description                 interface{}   `json:"i$Description"`
+			I_EMCCanBeUsedForRemoteMirror bool          `json:"i$EMCCanBeUsedForRemoteMirror"`
+			I_EMCDataFormat               string        `json:"i$EMCDataFormat"`
+			I_EMCDefaultSRPforFBAvolumes  bool          `json:"i$EMCDefaultSRPforFBAvolumes"`
+			I_EMCDiskDriveType            string        `json:"i$EMCDiskDriveType"`
+			I_EMCIsBound                  bool          `json:"i$EMCIsBound"`
+			I_EMCLocality                 []int         `json:"i$EMCLocality"`
+			I_EMCOversubscribedCapacity   int           `json:"i$EMCOversubscribedCapacity"`
+			I_EMCPercentReservedCapacity  int           `json:"i$EMCPercentReservedCapacity"`
+			I_EMCPercentSubscribed        int           `json:"i$EMCPercentSubscribed"`
+			I_EMCPercentageUsed           int           `json:"i$EMCPercentageUsed"`
+			I_EMCRemoteMirrorSpace        int           `json:"i$EMCRemoteMirrorSpace"`
+			I_EMCSnapshotSpace            int           `json:"i$EMCSnapshotSpace"`
+			I_EMCSubscribedCapacity       int           `json:"i$EMCSubscribedCapacity"`
+			I_ElementName                 string        `json:"i$ElementName"`
+			I_ElementsShareSpace          bool          `json:"i$ElementsShareSpace"`
+			I_HealthState                 int           `json:"i$HealthState"`
+			I_InstanceID                  string        `json:"i$InstanceID"`
+			I_LowSpaceWarningThreshold    int           `json:"i$LowSpaceWarningThreshold"`
+			I_OperationalStatus           []int         `json:"i$OperationalStatus"`
+			I_PoolID                      string        `json:"i$PoolID"`
+			I_Primordial                  bool          `json:"i$Primordial"`
+			I_RemainingManagedSpace       int           `json:"i$RemainingManagedSpace"`
+			I_SpaceLimit                  int           `json:"i$SpaceLimit"`
+			I_SpaceLimitDetermination     int           `json:"i$SpaceLimitDetermination"`
+			I_StatusDescriptions          []string      `json:"i$StatusDescriptions"`
+			I_ThinProvisionMetaDataSpace  int           `json:"i$ThinProvisionMetaDataSpace"`
+			I_TotalManagedSpace           int           `json:"i$TotalManagedSpace"`
+			I_Usage                       int           `json:"i$Usage"`
+			Links                         []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //            GET a list of Storage Pools                    //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::" + sid + "/relationships/Symm_SRPStoragePool", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::SymmStorageSystem,Name::"+sid+"/relationships/Symm_SRPStoragePool", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -190,59 +180,59 @@ func (smis *SMIS) GetStoragePools(sid string) (resp *GetStoragePoolsResp, err er
 ////////////////////////////////////////////////////////////
 
 type GetMaskingViewsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                    string   `json:"@type"`
-            I_Caption                 string   `json:"i$Caption"`
-            I_CreationClassName       string   `json:"i$CreationClassName"`
-            I_Description             string   `json:"i$Description"`
-            I_DeviceID                string   `json:"i$DeviceID"`
-            I_EMCAdapterRole          string   `json:"i$EMCAdapterRole"`
-            I_ElementName             string   `json:"i$ElementName"`
-            I_EnabledDefault          int      `json:"i$EnabledDefault"`
-            I_EnabledState            int      `json:"i$EnabledState"`
-            I_Generation              int      `json:"i$Generation"`
-            I_HealthState             int      `json:"i$HealthState"`
-            I_MaxUnitsControlled      int      `json:"i$MaxUnitsControlled"`
-            I_Name                    string   `json:"i$Name"`
-            I_NameFormat              int      `json:"i$NameFormat"`
-            I_OperationalStatus       []int    `json:"i$OperationalStatus"`
-            I_OtherNameFormat         string   `json:"i$OtherNameFormat"`
-            I_RequestedState          int      `json:"i$RequestedState"`
-            I_StatusDescriptions      []string `json:"i$StatusDescriptions"`
-            I_SystemCreationClassName string   `json:"i$SystemCreationClassName"`
-            I_SystemName              string   `json:"i$SystemName"`
-            I_TransitioningToState    int      `json:"i$TransitioningToState"`
-            Links                     []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                    string   `json:"@type"`
+			I_Caption                 string   `json:"i$Caption"`
+			I_CreationClassName       string   `json:"i$CreationClassName"`
+			I_Description             string   `json:"i$Description"`
+			I_DeviceID                string   `json:"i$DeviceID"`
+			I_EMCAdapterRole          string   `json:"i$EMCAdapterRole"`
+			I_ElementName             string   `json:"i$ElementName"`
+			I_EnabledDefault          int      `json:"i$EnabledDefault"`
+			I_EnabledState            int      `json:"i$EnabledState"`
+			I_Generation              int      `json:"i$Generation"`
+			I_HealthState             int      `json:"i$HealthState"`
+			I_MaxUnitsControlled      int      `json:"i$MaxUnitsControlled"`
+			I_Name                    string   `json:"i$Name"`
+			I_NameFormat              int      `json:"i$NameFormat"`
+			I_OperationalStatus       []int    `json:"i$OperationalStatus"`
+			I_OtherNameFormat         string   `json:"i$OtherNameFormat"`
+			I_RequestedState          int      `json:"i$RequestedState"`
+			I_StatusDescriptions      []string `json:"i$StatusDescriptions"`
+			I_SystemCreationClassName string   `json:"i$SystemCreationClassName"`
+			I_SystemName              string   `json:"i$SystemName"`
+			I_TransitioningToState    int      `json:"i$TransitioningToState"`
+			Links                     []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //            GET a list of Masking Views                    //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetMaskingViews(sid string) (resp *GetMaskingViewsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/relationships/Symm_LunMaskingView", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetMaskingViews(sid string) (resp *GetMaskingViewsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/relationships/Symm_LunMaskingView", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -251,56 +241,56 @@ func (smis *SMIS) GetMaskingViews(sid string) (resp *GetMaskingViewsResp, err er
 ////////////////////////////////////////////////////////////
 
 type GetStorageGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                            string      `json:"@type"`
-            I_Caption                         string      `json:"i$Caption"`
-            I_DeleteOnEmpty                   bool        `json:"i$DeleteOnEmpty"`
-            I_DeleteWhenBecomesUnassociated   bool        `json:"i$DeleteWhenBecomesUnassociated"`
-            I_EMCAssociatedToView             bool        `json:"i$EMCAssociatedToView"`
-            I_EMCFastSetting                  string      `json:"i$EMCFastSetting"`
-            I_EMCMaxIOBandwidthInherited      bool        `json:"i$EMCMaxIOBandwidthInherited"`
-            I_EMCMaxIODynamicDistributionType int         `json:"i$EMCMaxIODynamicDistributionType"`
-            I_EMCMaximumBandwidth             int         `json:"i$EMCMaximumBandwidth"`
-            I_EMCMaximumIO                    int         `json:"i$EMCMaximumIO"`
-            I_EMCRecoverPointEnabled          bool        `json:"i$EMCRecoverPointEnabled"`
-            I_EMCSLO                          string      `json:"i$EMCSLO"`
-            I_EMCSLOBaseName                  string      `json:"i$EMCSLOBaseName"`
-            I_EMCSRP                          string      `json:"i$EMCSRP"`
-            I_EMCWorkload                     interface{} `json:"i$EMCWorkload"`
-            I_ElementName                     string      `json:"i$ElementName"`
-            I_Generation                      int         `json:"i$Generation"`
-            I_InstanceID                      string      `json:"i$InstanceID"`
-            Links                             []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                            string      `json:"@type"`
+			I_Caption                         string      `json:"i$Caption"`
+			I_DeleteOnEmpty                   bool        `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated   bool        `json:"i$DeleteWhenBecomesUnassociated"`
+			I_EMCAssociatedToView             bool        `json:"i$EMCAssociatedToView"`
+			I_EMCFastSetting                  string      `json:"i$EMCFastSetting"`
+			I_EMCMaxIOBandwidthInherited      bool        `json:"i$EMCMaxIOBandwidthInherited"`
+			I_EMCMaxIODynamicDistributionType int         `json:"i$EMCMaxIODynamicDistributionType"`
+			I_EMCMaximumBandwidth             int         `json:"i$EMCMaximumBandwidth"`
+			I_EMCMaximumIO                    int         `json:"i$EMCMaximumIO"`
+			I_EMCRecoverPointEnabled          bool        `json:"i$EMCRecoverPointEnabled"`
+			I_EMCSLO                          string      `json:"i$EMCSLO"`
+			I_EMCSLOBaseName                  string      `json:"i$EMCSLOBaseName"`
+			I_EMCSRP                          string      `json:"i$EMCSRP"`
+			I_EMCWorkload                     interface{} `json:"i$EMCWorkload"`
+			I_ElementName                     string      `json:"i$ElementName"`
+			I_Generation                      int         `json:"i$Generation"`
+			I_InstanceID                      string      `json:"i$InstanceID"`
+			Links                             []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //         GET a list of Storage (Device) Groups             //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_DeviceMaskingGroup", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-"+sid+"/relationships/SE_DeviceMaskingGroup", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -309,45 +299,45 @@ func (smis *SMIS) GetStorageGroups(sid string) (resp *GetStorageGroupsResp, err 
 ////////////////////////////////////////////////////////////
 
 type GetPortGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                          string `json:"@type"`
-            I_Caption                       string `json:"i$Caption"`
-            I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
-            I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
-            I_ElementName                   string `json:"i$ElementName"`
-            I_Generation                    int    `json:"i$Generation"`
-            I_InstanceID                    string `json:"i$InstanceID"`
-            Links                           []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                          string `json:"@type"`
+			I_Caption                       string `json:"i$Caption"`
+			I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
+			I_ElementName                   string `json:"i$ElementName"`
+			I_Generation                    int    `json:"i$Generation"`
+			I_InstanceID                    string `json:"i$InstanceID"`
+			Links                           []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //         GET a list of Port (Target) Groups                //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_TargetMaskingGroup", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-"+sid+"/relationships/SE_TargetMaskingGroup", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -356,46 +346,46 @@ func (smis *SMIS) GetPortGroups(sid string) (resp *GetPortGroupsResp, err error)
 ////////////////////////////////////////////////////////////
 
 type GetHostGroupsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                          string `json:"@type"`
-            I_Caption                       string `json:"i$Caption"`
-            I_ConsistentLogicalUnitNumber   bool   `json:"i$ConsistentLogicalUnitNumber"`
-            I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
-            I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
-            I_ElementName                   string `json:"i$ElementName"`
-            I_Generation                    int    `json:"i$Generation"`
-            I_InstanceID                    string `json:"i$InstanceID"`
-            Links                           []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                          string `json:"@type"`
+			I_Caption                       string `json:"i$Caption"`
+			I_ConsistentLogicalUnitNumber   bool   `json:"i$ConsistentLogicalUnitNumber"`
+			I_DeleteOnEmpty                 bool   `json:"i$DeleteOnEmpty"`
+			I_DeleteWhenBecomesUnassociated bool   `json:"i$DeleteWhenBecomesUnassociated"`
+			I_ElementName                   string `json:"i$ElementName"`
+			I_Generation                    int    `json:"i$Generation"`
+			I_InstanceID                    string `json:"i$InstanceID"`
+			Links                           []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //         GET a list of Host (Initiator) Groups             //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/relationships/SE_InitiatorMaskingGroup", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-"+sid+"/relationships/SE_InitiatorMaskingGroup", nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -404,117 +394,117 @@ func (smis *SMIS) GetHostGroups(sid string) (resp *GetHostGroupsResp, err error)
 ////////////////////////////////////////////////////////////
 
 type GetVolumesResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                              string          `json:"@type"`
-            I_Access                            int             `json:"i$Access"`
-            I_BlockSize                         int             `json:"i$BlockSize"`
-            I_Caption                           string          `json:"i$Caption"`
-            I_ClientSettableUsage               []interface{}   `json:"i$ClientSettableUsage"`
-            I_CompressionRate                   int             `json:"i$CompressionRate"`
-            I_CompressionState                  int             `json:"i$CompressionState"`
-            I_ConsumableBlocks                  int             `json:"i$ConsumableBlocks"`
-            I_CreationClassName                 string          `json:"i$CreationClassName"`
-            I_DataRedundancy                    int             `json:"i$DataRedundancy"`
-            I_DeltaReservation                  int             `json:"i$DeltaReservation"`
-            I_DeviceID                          string          `json:"i$DeviceID"`
-            I_ElementName                       string          `json:"i$ElementName"`
-            I_EMCBSPElementType                 int             `json:"i$EMCBSPElementType"`
-            I_EMCBSPInstanceID                  string          `json:"i$EMCBSPInstanceID"`
-            I_EMCConsumableBlocksWritten        int             `json:"i$EMCConsumableBlocksWritten"`
-            I_EMCDataFormat                     string          `json:"i$EMCDataFormat"`
-            I_EMCDIFEnabled                     bool            `json:"i$EMCDIFEnabled"`
-            I_EMCFullyAllocated                 bool            `json:"i$EMCFullyAllocated"`
-            I_EMCIsBound                        bool            `json:"i$EMCIsBound"`
-            I_EMCIsComposite                    bool            `json:"i$EMCIsComposite"`
-            I_EMCIsDeDuplicated                 bool            `json:"i$EMCIsDeDuplicated"`
-            I_EMCIsMapped                       bool            `json:"i$EMCIsMapped"`
-            I_EMCRaidLevel                      string          `json:"i$EMCRaidLevel"`
-            I_EMCRecoverPointEnabled            bool            `json:"i$EMCRecoverPointEnabled"`
-            I_EMCSpaceConsumed                  int             `json:"i$EMCSpaceConsumed"`
-            I_EMCVolumeAttributes               []int           `json:"i$EMCVolumeAttributes"`
-            I_EMCVolumeAttributes2              []int           `json:"i$EMCVolumeAttributes2"`
-            I_EMCVolumeAttributesDescription    []string        `json:"i$EMCVolumeAttributesDescription"`
-            I_EMCVolumeAttributesDescription2   []string        `json:"i$EMCVolumeAttributesDescription2"`
-            I_EMCVolumeLabel                    string          `json:"i$EMCVolumeLabel"`
-            I_EMCWWN                            string          `json:"i$EMCWWN"`
-            I_EnabledState                      int             `json:"i$EnabledState"`
-            I_ExtentDiscriminator               []string        `json:"i$ExtentDiscriminator"`
-            I_ExtentStatus                      []int           `json:"i$ExtentStatus"`
-            I_HealthState                       int             `json:"i$HealthState"`
-            I_IdentifyingDescriptions           []string        `json:"i$IdentifyingDescriptions"`
-            I_IsBasedOnUnderlyingRedundancy     bool            `json:"i$IsBasedOnUnderlyingRedundancy"`
-            I_IsComposite                       bool            `json:"i$IsComposite"`
-            I_IsCompressed                      bool            `json:"i$IsCompressed"`
-            I_Name                              string          `json:"i$Name"`
-            I_NameFormat                        int             `json:"i$NameFormat"`
-            I_NameNamespace                     int             `json:"i$NameNamespace"`
-            I_NoSinglePointOfFailure            bool            `json:"i$NoSinglePointOfFailure"`
-            I_NumberOfBlocks                    int             `json:"i$NumberOfBlocks"`
-            I_OperationalStatus                 []int           `json:"i$OperationalStatus"`
-            I_OtherIdentifyingInfo              []string        `json:"i$OtherIdentifyingInfo"`
-            I_OtherNameFormat                   string          `json:"i$OtherNameFormat"`
-            I_PackageRedundancy                 int             `json:"i$PackageRedundancy"`
-            I_Primordial                        bool            `json:"i$Primordial"`
-            I_Purpose                           string          `json:"i$Purpose"`
-            I_RequestedState                    int             `json:"i$RequestedState"`
-            I_SequentialAccess                  bool            `json:"i$SequentialAccess"`
-            I_SystemCreationClassName           string          `json:"i$SystemCreationClassName"`
-            I_SystemName                        string          `json:"i$SystemName"`
-            I_StatusDescriptions                []string        `json:"i$StatusDescriptions"`
-            I_StatusInfo                        int             `json:"i$StatusInfo"`
-            I_StorageTieringSelection           int             `json:"i$StorageTieringSelection"`
-            I_ThinlyProvisioned                 bool            `json:"i$ThinlyProvisioned"`
-            I_TransitioningToState              int             `json:"i$TransitioningToState"`
-            I_Usage                             int             `json:"i$Usage"`
-            Links []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type    string      `json:"content-type"`
-        Gd_etag         string      `json:"gd$etag"`
-        Links           []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated         string      `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                            string        `json:"@type"`
+			I_Access                          int           `json:"i$Access"`
+			I_BlockSize                       int           `json:"i$BlockSize"`
+			I_Caption                         string        `json:"i$Caption"`
+			I_ClientSettableUsage             []interface{} `json:"i$ClientSettableUsage"`
+			I_CompressionRate                 int           `json:"i$CompressionRate"`
+			I_CompressionState                int           `json:"i$CompressionState"`
+			I_ConsumableBlocks                int           `json:"i$ConsumableBlocks"`
+			I_CreationClassName               string        `json:"i$CreationClassName"`
+			I_DataRedundancy                  int           `json:"i$DataRedundancy"`
+			I_DeltaReservation                int           `json:"i$DeltaReservation"`
+			I_DeviceID                        string        `json:"i$DeviceID"`
+			I_ElementName                     string        `json:"i$ElementName"`
+			I_EMCBSPElementType               int           `json:"i$EMCBSPElementType"`
+			I_EMCBSPInstanceID                string        `json:"i$EMCBSPInstanceID"`
+			I_EMCConsumableBlocksWritten      int           `json:"i$EMCConsumableBlocksWritten"`
+			I_EMCDataFormat                   string        `json:"i$EMCDataFormat"`
+			I_EMCDIFEnabled                   bool          `json:"i$EMCDIFEnabled"`
+			I_EMCFullyAllocated               bool          `json:"i$EMCFullyAllocated"`
+			I_EMCIsBound                      bool          `json:"i$EMCIsBound"`
+			I_EMCIsComposite                  bool          `json:"i$EMCIsComposite"`
+			I_EMCIsDeDuplicated               bool          `json:"i$EMCIsDeDuplicated"`
+			I_EMCIsMapped                     bool          `json:"i$EMCIsMapped"`
+			I_EMCRaidLevel                    string        `json:"i$EMCRaidLevel"`
+			I_EMCRecoverPointEnabled          bool          `json:"i$EMCRecoverPointEnabled"`
+			I_EMCSpaceConsumed                int           `json:"i$EMCSpaceConsumed"`
+			I_EMCVolumeAttributes             []int         `json:"i$EMCVolumeAttributes"`
+			I_EMCVolumeAttributes2            []int         `json:"i$EMCVolumeAttributes2"`
+			I_EMCVolumeAttributesDescription  []string      `json:"i$EMCVolumeAttributesDescription"`
+			I_EMCVolumeAttributesDescription2 []string      `json:"i$EMCVolumeAttributesDescription2"`
+			I_EMCVolumeLabel                  string        `json:"i$EMCVolumeLabel"`
+			I_EMCWWN                          string        `json:"i$EMCWWN"`
+			I_EnabledState                    int           `json:"i$EnabledState"`
+			I_ExtentDiscriminator             []string      `json:"i$ExtentDiscriminator"`
+			I_ExtentStatus                    []int         `json:"i$ExtentStatus"`
+			I_HealthState                     int           `json:"i$HealthState"`
+			I_IdentifyingDescriptions         []string      `json:"i$IdentifyingDescriptions"`
+			I_IsBasedOnUnderlyingRedundancy   bool          `json:"i$IsBasedOnUnderlyingRedundancy"`
+			I_IsComposite                     bool          `json:"i$IsComposite"`
+			I_IsCompressed                    bool          `json:"i$IsCompressed"`
+			I_Name                            string        `json:"i$Name"`
+			I_NameFormat                      int           `json:"i$NameFormat"`
+			I_NameNamespace                   int           `json:"i$NameNamespace"`
+			I_NoSinglePointOfFailure          bool          `json:"i$NoSinglePointOfFailure"`
+			I_NumberOfBlocks                  int           `json:"i$NumberOfBlocks"`
+			I_OperationalStatus               []int         `json:"i$OperationalStatus"`
+			I_OtherIdentifyingInfo            []string      `json:"i$OtherIdentifyingInfo"`
+			I_OtherNameFormat                 string        `json:"i$OtherNameFormat"`
+			I_PackageRedundancy               int           `json:"i$PackageRedundancy"`
+			I_Primordial                      bool          `json:"i$Primordial"`
+			I_Purpose                         string        `json:"i$Purpose"`
+			I_RequestedState                  int           `json:"i$RequestedState"`
+			I_SequentialAccess                bool          `json:"i$SequentialAccess"`
+			I_SystemCreationClassName         string        `json:"i$SystemCreationClassName"`
+			I_SystemName                      string        `json:"i$SystemName"`
+			I_StatusDescriptions              []string      `json:"i$StatusDescriptions"`
+			I_StatusInfo                      int           `json:"i$StatusInfo"`
+			I_StorageTieringSelection         int           `json:"i$StorageTieringSelection"`
+			I_ThinlyProvisioned               bool          `json:"i$ThinlyProvisioned"`
+			I_TransitioningToState            int           `json:"i$TransitioningToState"`
+			I_Usage                           int           `json:"i$Usage"`
+			Links                             []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //            GET a list of Storage Volumes                  //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetVolumes(sid string) (resp *GetVolumesResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::" + sid + "/relationships/CIM_StorageVolume", nil, &resp)
-    return resp,err
+func (smis *SMIS) GetVolumes(sid string) (resp *GetVolumesResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_StorageSystem/CreationClassName::Symm_StorageSystem,Name::"+sid+"/relationships/CIM_StorageVolume", nil, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////
 //            GET a Storage Volume by ID                 //
 ///////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetVolumeByID(sid string, volumeID string) (resp *GetVolumesResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StorageVolume/CreationClassName::Symm_StorageVolume,DeviceID::" + volumeID + ",SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid, nil, &resp)
-    return resp,err
+func (smis *SMIS) GetVolumeByID(sid string, volumeID string) (resp *GetVolumesResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_StorageVolume/CreationClassName::Symm_StorageVolume,DeviceID::"+volumeID+",SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid, nil, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////
 //            GET a Storage Volume by Name               //
 ///////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetVolumeByName(sid string, volumeName string) (resp *GetVolumesResp, err error){
-    err = smis.query("GET",`/ecom/edaa/root/emc/types/CIM_StorageVolume/instances?filter=SystemName lk "` + sid + `" and ElementName lk "` + volumeName + `"`, nil, &resp)
-    return resp,err
+func (smis *SMIS) GetVolumeByName(sid string, volumeName string) (resp *GetVolumesResp, err error) {
+	err = smis.query("GET", `/ecom/edaa/root/emc/types/CIM_StorageVolume/instances?filter=SystemName lk "`+sid+`" and ElementName lk "`+volumeName+`"`, nil, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -523,57 +513,57 @@ func (smis *SMIS) GetVolumeByName(sid string, volumeName string) (resp *GetVolum
 ////////////////////////////////////////////////////////////
 
 type GetJobStatusResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                              string          `json:"@type"`
-            I_DeleteOnCompletion                bool            `json:"i$DeleteOnCompletion"`
-            I_Description                       string          `json:"i$Description"`
-            I_ElapsedTime                       string          `json:"i$ElapsedTime"`
-            I_ErrorCode                         int             `json:"i$ErrorCode"`
-            I_ErrorDescription                  string          `json:"i$ErrorDescription"`
-            I_HealthState                       int             `json:"i$HealthState"`
-            I_JobRunTimes                       int             `json:"i$JobRunTimes"`
-            I_JobState                          int             `json:"i$JobState"`
-            I_JobStatus                         string          `json:"i$JobStatus"`
-            I_LocalOrUtcTime                    int             `json:"i$LocalOrUtcTime"`
-            I_Name                              string          `json:"i$Name"`
-            I_OperationalStatus                 []int           `json:"i$OperationalStatus"`
-            I_Owner                             string          `json:"i$Owner"`           
-            I_PercentComplete                   int             `json:"i$PercentComplete"`
-            I_StartTime                         string          `json:"i$StartTime"`
-            I_Status                            string          `json:"i$Status"`
-            I_StatusDescriptions                []string        `json:"i$StatusDescriptions"`
-            I_TimeBeforeRemoval                 string          `json:"i$TimeBeforeRemoval"`
-            I_TimeOfLastStateChange             string          `json:"i$TimeOfLastStateChange"`
-            I_TimeSubmitted                     string          `json:"i$TimeSubmitted"`
-            I_UntilTime                         string          `json:"i$UntilTime"`
-            Links []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type    string      `json:"content-type"`
-        Gd_etag         string      `json:"gd$etag"`
-        Links           []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated         string      `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                  string   `json:"@type"`
+			I_DeleteOnCompletion    bool     `json:"i$DeleteOnCompletion"`
+			I_Description           string   `json:"i$Description"`
+			I_ElapsedTime           string   `json:"i$ElapsedTime"`
+			I_ErrorCode             int      `json:"i$ErrorCode"`
+			I_ErrorDescription      string   `json:"i$ErrorDescription"`
+			I_HealthState           int      `json:"i$HealthState"`
+			I_JobRunTimes           int      `json:"i$JobRunTimes"`
+			I_JobState              int      `json:"i$JobState"`
+			I_JobStatus             string   `json:"i$JobStatus"`
+			I_LocalOrUtcTime        int      `json:"i$LocalOrUtcTime"`
+			I_Name                  string   `json:"i$Name"`
+			I_OperationalStatus     []int    `json:"i$OperationalStatus"`
+			I_Owner                 string   `json:"i$Owner"`
+			I_PercentComplete       int      `json:"i$PercentComplete"`
+			I_StartTime             string   `json:"i$StartTime"`
+			I_Status                string   `json:"i$Status"`
+			I_StatusDescriptions    []string `json:"i$StatusDescriptions"`
+			I_TimeBeforeRemoval     string   `json:"i$TimeBeforeRemoval"`
+			I_TimeOfLastStateChange string   `json:"i$TimeOfLastStateChange"`
+			I_TimeSubmitted         string   `json:"i$TimeSubmitted"`
+			I_UntilTime             string   `json:"i$UntilTime"`
+			Links                   []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //      GET a Job Status                                                                        //
 //                                                                                              //
-//  2 - New: job has not been started                                                           // 
+//  2 - New: job has not been started                                                           //
 //  3 - Starting: job is moving into running state                                              //
 //  4 - Running: job is running                                                                 //
 //  5 - Suspended: job is stopped, but can be restarted                                         //
@@ -586,12 +576,32 @@ type GetJobStatusResp struct {
 //  12 - Query Pending: job is waiting for a client to resolve a query                          //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetJobStatus(instanceID string) (resp *GetJobStatusResp, JobStatus int, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + instanceID, nil, &resp)
-    JobStatus = resp.Entries[0].Content.I_JobState 
-    return resp,JobStatus,err
-}
+func (smis *SMIS) GetJobStatus(instanceID string) (resp *GetJobStatusResp, JobStatus string, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::"+instanceID, nil, &resp)
+	if err != nil {
+		return nil, "", err
+	}
+	jobStatusMap := map[int]string{
+		2:  "NEW",
+		3:  "STARTING",
+		4:  "RUNNING",
+		5:  "SUSPENDED",
+		6:  "SHUTTING_DOWN",
+		7:  "COMPLETED",
+		8:  "TERMINATED",
+		9:  "KILLED",
+		10: "EXCEPTION",
+		11: "SERVICE",
+		12: "QUERY_PENDING",
+	}
 
+	var jobStatus string
+	var ok bool
+	if jobStatus, ok = jobStatusMap[resp.Entries[0].Content.I_JobState]; !ok {
+		jobStatus = "UNKNOWN"
+	}
+	return resp, jobStatus, err
+}
 
 //////////////////////////////////////
 //    REQUEST Structs used for      //
@@ -599,15 +609,15 @@ func (smis *SMIS) GetJobStatus(instanceID string) (resp *GetJobStatusResp, JobSt
 //////////////////////////////////////
 
 type PostVolumesReq struct {
-    PostVolumesRequestContent PostVolumesReqContent `json:"content"`
+	PostVolumesRequestContent *PostVolumesReqContent `json:"content"`
 }
 
 type PostVolumesReqContent struct {
-    AtType                 string `json:"@type"`
-    ElementName            string `json:"ElementName"`
-    ElementType            string `json:"ElementType"`
-    EMCNumberOfDevices     string `json:"EMCNumberOfDevices"`
-    Size                   string `json:"Size"`
+	AtType             string `json:"@type"`
+	ElementName        string `json:"ElementName"`
+	ElementType        string `json:"ElementType"`
+	EMCNumberOfDevices string `json:"EMCNumberOfDevices"`
+	Size               string `json:"Size"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -616,34 +626,34 @@ type PostVolumesReqContent struct {
 ////////////////////////////////////////////////////////////
 
 type PostVolumesResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-                I_Size int `json:"i$Size"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+				I_Size int `json:"i$Size"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////
@@ -651,19 +661,19 @@ type PostVolumesResp struct {
 //     and check for Volume Creation Completion          //
 ///////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp1 *PostVolumesResp, resp2 *GetJobStatusResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateOrModifyElementFromStoragePool", req, &resp1)
-   
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
-    JobStatus := resp2.Entries[0].Content.I_JobState
-    for (JobStatus == 2 || JobStatus == 3 || JobStatus == 4 || JobStatus == 5 || JobStatus == 6 || JobStatus == 12){
-        err = smis.query("GET","/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::" + resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
-        JobStatus = resp2.Entries[0].Content.I_JobState
-    }
-    if (JobStatus != 7) {
-        fmt.Println("Error: Volume creation incomplete") 
-    }
-    return resp1,resp2,err
+func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp1 *PostVolumesResp, resp2 *GetJobStatusResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/CreateOrModifyElementFromStoragePool", req, &resp1)
+
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::"+resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
+	JobStatus := resp2.Entries[0].Content.I_JobState
+	for JobStatus == 2 || JobStatus == 3 || JobStatus == 4 || JobStatus == 5 || JobStatus == 6 || JobStatus == 12 {
+		err = smis.query("GET", "/ecom/edaa/root/emc/instances/SE_ConcreteJob/InstanceID::"+resp1.Entries[0].Content.I_Parameters.I_Job.E0_InstanceID, nil, &resp2)
+		JobStatus = resp2.Entries[0].Content.I_JobState
+	}
+	if JobStatus != 7 {
+		fmt.Println("Error: Volume creation incomplete")
+	}
+	return resp1, resp2, err
 }
 
 //////////////////////////////////////
@@ -676,13 +686,13 @@ func (smis *SMIS) PostVolumes(req *PostVolumesReq, sid string) (resp1 *PostVolum
 //////////////////////////////////////
 
 type PostGroupReq struct {
-        PostGroupRequestContent PostGroupReqContent `json:"content"`
+	PostGroupRequestContent *PostGroupReqContent `json:"content"`
 }
 
 type PostGroupReqContent struct {
-        AtType           string `json:"@type"`
-        GroupName        string `json:"GroupName"`
-        Type             string `json:"Type"`
+	AtType    string `json:"@type"`
+	GroupName string `json:"GroupName"`
+	Type      string `json:"Type"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -694,46 +704,44 @@ type PostGroupReqContent struct {
 //  Initiator Group (IG) - Type SE_InitiatorMaskingGroup  //
 ////////////////////////////////////////////////////////////
 
-
 type PostGroupResp struct {
-    Entries []struct {
-        Content struct {
-            _type        string `json:"@type"`
-            I_parameters struct {
-                I_MaskingGroup struct {
-                    _type         string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$MaskingGroup"`
-            } `json:"i$parameters"`
-            I_returnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			_type        string `json:"@type"`
+			I_parameters struct {
+				I_MaskingGroup struct {
+					_type         string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$MaskingGroup"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
-
 
 ///////////////////////////////////////////////////////////////
 //                  CREATE an Array Group                    //
 // Type Depends on Type field specified in requesting struct //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGroupResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-" + sid + "/action/CreateGroup", req, &resp)
-    return resp, err
+func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGroupResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::SYMMETRIX-+-"+sid+"/action/CreateGroup", req, &resp)
+	return resp, err
 }
 
 ////////////////////////////////////////////////////////////
@@ -741,83 +749,83 @@ func (smis *SMIS) PostCreateGroup(req *PostGroupReq, sid string) (resp *PostGrou
 ////////////////////////////////////////////////////////////
 
 type GetStoragePoolSettingsResp struct {
-    Entries []struct {
-        Content struct {
-            AtType                           string `json:"@type"`
-            I_Changeable                     bool   `json:"i$Changeable"`
-            I_ChangeableType                 int    `json:"i$ChangeableType"`
-            I_CompressedElement              bool   `json:"i$CompressedElement"`
-            I_CompressionRate                int    `json:"i$CompressionRate"`
-            I_DataRedundancyGoal             int    `json:"i$DataRedundancyGoal"`
-            I_DataRedundancyMax              int    `json:"i$DataRedundancyMax"`
-            I_DataRedundancyMin              int    `json:"i$DataRedundancyMin"`
-            I_DeltaReservationGoal           int    `json:"i$DeltaReservationGoal"`
-            I_DeltaReservationMax            int    `json:"i$DeltaReservationMax"`
-            I_DeltaReservationMin            int    `json:"i$DeltaReservationMin"`
-            I_ElementName                    string `json:"i$ElementName"`
-            I_EMCApproxAverageResponseTime   float64 `json:"i$EMCApproxAverageResponseTime"`
-            I_EMCDeduplicationRate           int    `json:"i$EMCDeduplicationRate"`
-            I_EMCEnableDIF                   int    `json:"i$EMCEnableDIF"`
-            I_EMCEnableEFDCache              int    `json:"i$EMCEnableEFDCache"`
-            I_EMCFastSetting                 string `json:"i$EMCFastSetting"`
-            I_EMCParticipateInPowerSavings   int    `json:"i$EMCParticipateInPowerSavings"`
-            I_EMCPoolCompressionState        int    `json:"i$EMCPoolCompressionState"`
-            I_EMCPottedSetting               bool   `json:"i$EMCPottedSetting"`
-            I_EMCRaidGroupLUN                bool   `json:"i$EMCRaidGroupLUN"`
-            I_EMCRaidLevel                   string `json:"i$EMCRaidLevel"`
-            I_EMCSLO                         string `json:"i$EMCSLO"`
-            I_EMCSLOBaseName                 string `json:"i$EMCSLOBaseName"`
-            I_EMCSLOdescription              string `json:"i$EMCSLOdescription"`
-            I_EMCSRP                         string `json:"i$EMCSRP"`
-            I_EMCStorageSettingType          int    `json:"i$EMCStorageSettingType"`
-            I_EMCUniqueID                    string `json:"i$EMCUniqueID"`
-            I_EMCWorkload                    string `json:"i$EMCWorkload"`
-            I_ExtentStripeLength             int    `json:"i$ExtentStripeLength"`
-            I_ExtentStripeLengthMax          int    `json:"i$ExtentStripeLengthMax"`
-            I_ExtentStripeLengthMin          int    `json:"i$ExtentStripeLengthMin"`
-            I_InitialStorageTierMethodology  int    `json:"i$InitialStorageTierMethodology"`
-            I_InitialStorageTieringSelection int    `json:"i$InitialStorageTieringSelection"`
-            I_InitialSynchronization         int    `json:"i$InitialSynchronization"`
-            I_InstanceID                     string `json:"i$InstanceID"`
-            I_NoSinglePointOfFailure         bool   `json:"i$NoSinglePointOfFailure"`
-            I_PackageRedundancyGoal          int    `json:"i$PackageRedundancyGoal"`
-            I_PackageRedundancyMax           int    `json:"i$PackageRedundancyMax"`
-            I_PackageRedundancyMin           int    `json:"i$PackageRedundancyMin"`
-            I_SpaceLimit                     int    `json:"i$SpaceLimit"`
-            I_StorageExtentInitialUsage      int    `json:"i$StorageExtentInitialUsage"`
-            I_StoragePoolInitialUsage        int    `json:"i$StoragePoolInitialUsage"`
-            I_ThinProvisionedPoolType        int    `json:"i$ThinProvisionedPoolType"`
-            I_UseReplicationBuffer           int    `json:"i$UseReplicationBuffer"`
-            Links                            []struct {
-                Href string `json:"href"`
-                Rel  string `json:"rel"`
-            } `json:"links"`
-            Xmlns_i string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Gd_etag      string `json:"gd$etag"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType                           string  `json:"@type"`
+			I_Changeable                     bool    `json:"i$Changeable"`
+			I_ChangeableType                 int     `json:"i$ChangeableType"`
+			I_CompressedElement              bool    `json:"i$CompressedElement"`
+			I_CompressionRate                int     `json:"i$CompressionRate"`
+			I_DataRedundancyGoal             int     `json:"i$DataRedundancyGoal"`
+			I_DataRedundancyMax              int     `json:"i$DataRedundancyMax"`
+			I_DataRedundancyMin              int     `json:"i$DataRedundancyMin"`
+			I_DeltaReservationGoal           int     `json:"i$DeltaReservationGoal"`
+			I_DeltaReservationMax            int     `json:"i$DeltaReservationMax"`
+			I_DeltaReservationMin            int     `json:"i$DeltaReservationMin"`
+			I_ElementName                    string  `json:"i$ElementName"`
+			I_EMCApproxAverageResponseTime   float64 `json:"i$EMCApproxAverageResponseTime"`
+			I_EMCDeduplicationRate           int     `json:"i$EMCDeduplicationRate"`
+			I_EMCEnableDIF                   int     `json:"i$EMCEnableDIF"`
+			I_EMCEnableEFDCache              int     `json:"i$EMCEnableEFDCache"`
+			I_EMCFastSetting                 string  `json:"i$EMCFastSetting"`
+			I_EMCParticipateInPowerSavings   int     `json:"i$EMCParticipateInPowerSavings"`
+			I_EMCPoolCompressionState        int     `json:"i$EMCPoolCompressionState"`
+			I_EMCPottedSetting               bool    `json:"i$EMCPottedSetting"`
+			I_EMCRaidGroupLUN                bool    `json:"i$EMCRaidGroupLUN"`
+			I_EMCRaidLevel                   string  `json:"i$EMCRaidLevel"`
+			I_EMCSLO                         string  `json:"i$EMCSLO"`
+			I_EMCSLOBaseName                 string  `json:"i$EMCSLOBaseName"`
+			I_EMCSLOdescription              string  `json:"i$EMCSLOdescription"`
+			I_EMCSRP                         string  `json:"i$EMCSRP"`
+			I_EMCStorageSettingType          int     `json:"i$EMCStorageSettingType"`
+			I_EMCUniqueID                    string  `json:"i$EMCUniqueID"`
+			I_EMCWorkload                    string  `json:"i$EMCWorkload"`
+			I_ExtentStripeLength             int     `json:"i$ExtentStripeLength"`
+			I_ExtentStripeLengthMax          int     `json:"i$ExtentStripeLengthMax"`
+			I_ExtentStripeLengthMin          int     `json:"i$ExtentStripeLengthMin"`
+			I_InitialStorageTierMethodology  int     `json:"i$InitialStorageTierMethodology"`
+			I_InitialStorageTieringSelection int     `json:"i$InitialStorageTieringSelection"`
+			I_InitialSynchronization         int     `json:"i$InitialSynchronization"`
+			I_InstanceID                     string  `json:"i$InstanceID"`
+			I_NoSinglePointOfFailure         bool    `json:"i$NoSinglePointOfFailure"`
+			I_PackageRedundancyGoal          int     `json:"i$PackageRedundancyGoal"`
+			I_PackageRedundancyMax           int     `json:"i$PackageRedundancyMax"`
+			I_PackageRedundancyMin           int     `json:"i$PackageRedundancyMin"`
+			I_SpaceLimit                     int     `json:"i$SpaceLimit"`
+			I_StorageExtentInitialUsage      int     `json:"i$StorageExtentInitialUsage"`
+			I_StoragePoolInitialUsage        int     `json:"i$StoragePoolInitialUsage"`
+			I_ThinProvisionedPoolType        int     `json:"i$ThinProvisionedPoolType"`
+			I_UseReplicationBuffer           int     `json:"i$UseReplicationBuffer"`
+			Links                            []struct {
+				Href string `json:"href"`
+				Rel  string `json:"rel"`
+			} `json:"links"`
+			Xmlns_i string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Gd_etag      string `json:"gd$etag"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //                GET Storage Pool Settings                  //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetStoragePoolSettings(srp_name, sid string) (resp *GetStoragePoolSettingsResp, err error){
-    err = smis.query("GET","/ecom/edaa/root/emc/instances/Symm_StoragePoolCapabilities/InstanceID::SYMMETRIX-+-" + sid + "-+-SR-+-" + srp_name + "/relationships/CIM_StorageSetting", nil, &resp)
-    return resp, err
+func (smis *SMIS) GetStoragePoolSettings(srp_name, sid string) (resp *GetStoragePoolSettingsResp, err error) {
+	err = smis.query("GET", "/ecom/edaa/root/emc/instances/Symm_StoragePoolCapabilities/InstanceID::SYMMETRIX-+-"+sid+"-+-SR-+-"+srp_name+"/relationships/CIM_StorageSetting", nil, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////////
@@ -825,12 +833,12 @@ func (smis *SMIS) GetStoragePoolSettings(srp_name, sid string) (resp *GetStorage
 ///////////////////////////////////////////////////////////////
 
 type SLO_Struct struct {
-    SLO_Name        string
-    respTime        float64
-    SRP             string
-    Workload        string
-    ElementName     string
-    InstanceID      string
+	SLO_Name    string
+	respTime    float64
+	SRP         string
+	Workload    string
+	ElementName string
+	InstanceID  string
 }
 
 ////////////////////////////////////////////////////////////////
@@ -841,32 +849,32 @@ type SLO_Struct struct {
 //   3 -> Parse out SLO information of VMAX3 and return it    //
 ////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) GetSLOs(sid string) (SLOs []SLO_Struct, err error){
-    storagePools, err := smis.GetStoragePools(sid)
-    if err != nil {
-               return nil, err
-        }
+func (smis *SMIS) GetSLOs(sid string) (SLOs []SLO_Struct, err error) {
+	storagePools, err := smis.GetStoragePools(sid)
+	if err != nil {
+		return nil, err
+	}
 
-    for _, SRP := range storagePools.Entries {
-        storagePoolSetting, err := smis.GetStoragePoolSettings(SRP.Content.I_ElementName, sid)
-        if err != nil {
-                return nil, err
-            }
-        for _, storagePoolSetting := range storagePoolSetting.Entries {
-            if(storagePoolSetting.Content.I_EMCSLO != ""){
-                newSLO := SLO_Struct{
-                    SLO_Name : storagePoolSetting.Content.I_EMCSLOBaseName,
-                    respTime : storagePoolSetting.Content.I_EMCApproxAverageResponseTime,
-                    SRP : storagePoolSetting.Content.I_EMCSRP,
-                    Workload : storagePoolSetting.Content.I_EMCWorkload,
-                    ElementName : storagePoolSetting.Content.I_ElementName,
-                    InstanceID : storagePoolSetting.Content.I_InstanceID,
-                }
-                SLOs = append(SLOs, newSLO)
-            }
-        }
-    }
-    return SLOs, nil
+	for _, SRP := range storagePools.Entries {
+		storagePoolSetting, err := smis.GetStoragePoolSettings(SRP.Content.I_ElementName, sid)
+		if err != nil {
+			return nil, err
+		}
+		for _, storagePoolSetting := range storagePoolSetting.Entries {
+			if storagePoolSetting.Content.I_EMCSLO != "" {
+				newSLO := SLO_Struct{
+					SLO_Name:    storagePoolSetting.Content.I_EMCSLOBaseName,
+					respTime:    storagePoolSetting.Content.I_EMCApproxAverageResponseTime,
+					SRP:         storagePoolSetting.Content.I_EMCSRP,
+					Workload:    storagePoolSetting.Content.I_EMCWorkload,
+					ElementName: storagePoolSetting.Content.I_ElementName,
+					InstanceID:  storagePoolSetting.Content.I_InstanceID,
+				}
+				SLOs = append(SLOs, newSLO)
+			}
+		}
+	}
+	return SLOs, nil
 }
 
 /////////////////////////////////////////////////////////
@@ -876,26 +884,26 @@ func (smis *SMIS) GetSLOs(sid string) (SLOs []SLO_Struct, err error){
 /////////////////////////////////////////////////////////
 
 type PostVolumesToSGReq struct {
-    PostVolumesToSGRequestContent PostVolumesToSGReqContent `json:"content"`
+	PostVolumesToSGRequestContent *PostVolumesToSGReqContent `json:"content"`
 }
 
 type PostVolumesToSGReqContent struct {
-    AtType                                 string                                `json:"@type"`
-    PostVolumesToSGRequestContentMG        PostVolumesToSGReqContentMG           `json:"MaskingGroup"`
-    PostVolumesToSGRequestContentMember    []PostVolumesToSGReqContentMember     `json:"Members"`
+	AtType                              string                             `json:"@type"`
+	PostVolumesToSGRequestContentMG     *PostVolumesToSGReqContentMG       `json:"MaskingGroup"`
+	PostVolumesToSGRequestContentMember []*PostVolumesToSGReqContentMember `json:"Members"`
 }
 
 type PostVolumesToSGReqContentMG struct {
-    AtType          string `json:"@type"`
-    InstanceID      string `json:"InstanceID"`
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
 }
 
 type PostVolumesToSGReqContentMember struct {
-    AtType                      string `json:"@type"`
-    CreationClassName           string `json:"CreationClassName"`
-    DeviceID                    string `json:"DeviceID"`
-    SystemCreationClassName     string `json:"SystemCreationClassName"`
-    SystemName                  string `json:"SystemName"`
+	AtType                  string `json:"@type"`
+	CreationClassName       string `json:"CreationClassName"`
+	DeviceID                string `json:"DeviceID"`
+	SystemCreationClassName string `json:"SystemCreationClassName"`
+	SystemName              string `json:"SystemName"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -905,53 +913,52 @@ type PostVolumesToSGReqContentMember struct {
 ////////////////////////////////////////////////////////////
 
 type PostVolumesToSGResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 ///////////////////////////////////////////////////////////////
 //             ADD Volumes to a Storage Group                //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostVolumesToSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) PostVolumesToSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/AddMembers", req, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////////
 //          REMOVE Volumes from a Storage Group              //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) RemoveVolumeFromSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) RemoveVolumeFromSG(req *PostVolumesToSGReq, sid string) (resp *PostVolumesToSGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/RemoveMembers", req, &resp)
+	return resp, err
 }
-
 
 /////////////////////////////////////////////////////////
 //               REQUEST Structs used for              //
@@ -959,13 +966,13 @@ func (smis *SMIS) RemoveVolumeFromSG(req *PostVolumesToSGReq, sid string) (resp 
 /////////////////////////////////////////////////////////
 
 type PostStorageHardwareIDReq struct {
-    PostStorageHardwareIDRequestContent PostStorageHardwareIDReqContent `json:"content"`
+	PostStorageHardwareIDRequestContent *PostStorageHardwareIDReqContent `json:"content"`
 }
 
 type PostStorageHardwareIDReqContent struct {
-    AtType      string      `json:"@type"`
-    IDType      string      `json:"IDType"`
-    StorageID   string      `json:"StorageID"`
+	AtType    string `json:"@type"`
+	IDType    string `json:"IDType"`
+	StorageID string `json:"StorageID"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -974,33 +981,33 @@ type PostStorageHardwareIDReqContent struct {
 ////////////////////////////////////////////////////////////
 
 type PostStorageHardwareIDResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_HardwareID struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$HardwareID"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_HardwareID struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$HardwareID"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 /////////////////////////////////////////////////////////
@@ -1010,23 +1017,23 @@ type PostStorageHardwareIDResp struct {
 /////////////////////////////////////////////////////////
 
 type PostInitiatorToHGReq struct {
-    PostInitiatorToHGRequestContent PostInitiatorToHGReqContent `json:"content"`
+	PostInitiatorToHGRequestContent *PostInitiatorToHGReqContent `json:"content"`
 }
 
 type PostInitiatorToHGReqContent struct {
-    AtType                                   string                                `json:"@type"`
-    PostInitiatorToHGRequestContentMG        PostInitiatorToHGReqContentMG        `json:"MaskingGroup"`
-    PostInitiatorToHGRequestContentMember    []PostInitiatorToHGReqContentMember  `json:"Members"`
+	AtType                                string                               `json:"@type"`
+	PostInitiatorToHGRequestContentMG     *PostInitiatorToHGReqContentMG       `json:"MaskingGroup"`
+	PostInitiatorToHGRequestContentMember []*PostInitiatorToHGReqContentMember `json:"Members"`
 }
 
 type PostInitiatorToHGReqContentMG struct {
-    AtType          string `json:"@type"`
-    InstanceID      string `json:"InstanceID"`
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
 }
 
 type PostInitiatorToHGReqContentMember struct {
-    AtType          string `json:"@type"`
-    InstanceID      string `json:"InstanceID"`
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -1036,35 +1043,34 @@ type PostInitiatorToHGReqContentMember struct {
 ////////////////////////////////////////////////////////////
 
 type PostInitiatorToHGResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
-
 
 ///////////////////////////////////////////////////////////////
 //             ADD Initiators to a Host Group                //
@@ -1073,14 +1079,14 @@ type PostInitiatorToHGResp struct {
 //     2 -> Add Storage Hardware ID to Initiator Group       //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostStorageHardwareID(req *PostStorageHardwareIDReq, sid string) (resp *PostStorageHardwareIDResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateStorageHardwareID", req, &resp)
-    return resp,err
+func (smis *SMIS) PostStorageHardwareID(req *PostStorageHardwareIDReq, sid string) (resp *PostStorageHardwareIDResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/CreateStorageHardwareID", req, &resp)
+	return resp, err
 }
 
-func (smis *SMIS) PostInitiatorToHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) PostInitiatorToHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/AddMembers", req, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1088,9 +1094,9 @@ func (smis *SMIS) PostInitiatorToHG(req *PostInitiatorToHGReq, sid string) (resp
 //     (Requires a Storage Hardware ID from the Initiator)   //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) RemoveInitiatorFromHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) RemoveInitiatorFromHG(req *PostInitiatorToHGReq, sid string) (resp *PostInitiatorToHGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/RemoveMembers", req, &resp)
+	return resp, err
 }
 
 /////////////////////////////////////////////////////////
@@ -1100,28 +1106,27 @@ func (smis *SMIS) RemoveInitiatorFromHG(req *PostInitiatorToHGReq, sid string) (
 /////////////////////////////////////////////////////////
 
 type PostPortToPGReq struct {
-    PostPortToPGRequestContent PostPortToPGReqContent `json:"content"`
+	PostPortToPGRequestContent *PostPortToPGReqContent `json:"content"`
 }
 
 type PostPortToPGReqContent struct {
-    AtType                              string                               `json:"@type"`
-    PostPortToPGRequestContentMG        PostPortToPGReqContentMG            `json:"MaskingGroup"`
-    PostPortToPGRequestContentMember    []PostPortToPGReqContentMember      `json:"Members"`
+	AtType                           string                          `json:"@type"`
+	PostPortToPGRequestContentMG     *PostPortToPGReqContentMG       `json:"MaskingGroup"`
+	PostPortToPGRequestContentMember []*PostPortToPGReqContentMember `json:"Members"`
 }
 
 type PostPortToPGReqContentMG struct {
-    AtType          string `json:"@type"`
-    InstanceID      string `json:"InstanceID"`
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
 }
 
 type PostPortToPGReqContentMember struct {
-    AtType                      string `json:"@type"`
-    CreationClassName           string `json:"CreationClassName"`
-    Name                        string `json:"Name"`
-    SystemCreationClassName     string `json:"SystemCreationClassName"`
-    SystemName                  string `json:"SystemName"`
+	AtType                  string `json:"@type"`
+	CreationClassName       string `json:"CreationClassName"`
+	Name                    string `json:"Name"`
+	SystemCreationClassName string `json:"SystemCreationClassName"`
+	SystemName              string `json:"SystemName"`
 }
-
 
 ///////////////////////////////////////////////////////
 //            RESPONSE Struct used for               //
@@ -1130,35 +1135,34 @@ type PostPortToPGReqContentMember struct {
 ///////////////////////////////////////////////////////
 
 type PostPortToPGResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_Parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //                     ADD Ports to a Port Group                   //
@@ -1168,18 +1172,18 @@ type PostPortToPGResp struct {
 //                  3 -> ADD Ports to Port Groups                  //
 /////////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostPortToPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/AddMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) PostPortToPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/AddMembers", req, &resp)
+	return resp, err
 }
 
 ///////////////////////////////////////////////////////////////
 //             REMOVE Ports from a Port Group                //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) RemovePortFromPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/RemoveMembers", req, &resp)
-    return resp,err
+func (smis *SMIS) RemovePortFromPG(req *PostPortToPGReq, sid string) (resp *PostPortToPGResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/RemoveMembers", req, &resp)
+	return resp, err
 }
 
 /////////////////////////////////////////////////////////
@@ -1188,29 +1192,29 @@ func (smis *SMIS) RemovePortFromPG(req *PostPortToPGReq, sid string) (resp *Post
 /////////////////////////////////////////////////////////
 
 type PostCreateMaskingViewReq struct {
-    PostCreateMaskingViewRequestContent PostCreateMaskingViewReqContent `json:"content"`
+	PostCreateMaskingViewRequestContent *PostCreateMaskingViewReqContent `json:"content"`
 }
 
 type PostCreateMaskingViewReqContent struct {
-    AtType                              string                          `json:"@type"`
-    ElementName                         string                          `json:"ElementName"`
-    PostInitiatorMaskingGroupRequest    PostInitiatorMaskingGroupReq    `json:"InitiatorMaskingGroup"`
-    PostTargetMaskingGroupRequest       PostTargetMaskingGroupReq       `json:"TargetMaskingGroup"`
-    PostDeviceMaskingGroupRequest       PostDeviceMaskingGroupReq       `json:"DeviceMaskingGroup"`
+	AtType                           string                        `json:"@type"`
+	ElementName                      string                        `json:"ElementName"`
+	PostInitiatorMaskingGroupRequest *PostInitiatorMaskingGroupReq `json:"InitiatorMaskingGroup"`
+	PostTargetMaskingGroupRequest    *PostTargetMaskingGroupReq    `json:"TargetMaskingGroup"`
+	PostDeviceMaskingGroupRequest    *PostDeviceMaskingGroupReq    `json:"DeviceMaskingGroup"`
 }
 
-type PostInitiatorMaskingGroupReq struct{
-    AtType           string  `json:"@type"`
-    InstanceID       string  `json:"InstanceID"`
-} 
-type PostTargetMaskingGroupReq struct{
-    AtType           string  `json:"@type"`
-    InstanceID       string  `json:"InstanceID"`
-} 
-type PostDeviceMaskingGroupReq struct{
-    AtType           string  `json:"@type"`
-    InstanceID       string  `json:"InstanceID"`
-} 
+type PostInitiatorMaskingGroupReq struct {
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
+}
+type PostTargetMaskingGroupReq struct {
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
+}
+type PostDeviceMaskingGroupReq struct {
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
+}
 
 ////////////////////////////////////////////////////////////
 //            RESPONSE Struct used for                    //
@@ -1218,79 +1222,77 @@ type PostDeviceMaskingGroupReq struct{
 ////////////////////////////////////////////////////////////
 
 type PostCreateMaskingViewResp struct {
-    Xmlns_gd string `json:"xmlns$gd"`
-    Updated  string `json:"updated"`
-    ID    string `json:"id"`
+	Xmlns_gd string `json:"xmlns$gd"`
+	Updated  string `json:"updated"`
+	ID       string `json:"id"`
 
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
 
-    Entries []struct {
+	Entries []struct {
+		Updated string `json:"updated"`
 
-        Updated string `json:"updated"`
-        
-        Links []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
+		Links []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
 
-        Content_type string `json:"content-type"`
-        
-        Content struct {
-            AtType       string `json:"@type"`
-            Xmlns_i      string `json:"xmlns$i"`
-            I_Parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_ReturnValue int    `json:"i$returnValue"` 
-        } `json:"content"`  
-    } `json:"entries"`
+		Content_type string `json:"content-type"`
+
+		Content struct {
+			AtType       string `json:"@type"`
+			Xmlns_i      string `json:"xmlns$i"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_ReturnValue int `json:"i$returnValue"`
+		} `json:"content"`
+	} `json:"entries"`
 }
 
 ///////////////////////////////////////////////////////////////
 //                  CREATE a Masking View                    //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid string) (resp *PostCreateMaskingViewResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/CreateMaskingView", req, &resp)
-    return resp,err
+func (smis *SMIS) PostCreateMaskingView(req *PostCreateMaskingViewReq, sid string) (resp *PostCreateMaskingViewResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/CreateMaskingView", req, &resp)
+	return resp, err
 }
-
 
 ////////////////////////////////////////////////////////////////
 //     Struct used to store all Baremetal HBA Information     //
 ////////////////////////////////////////////////////////////////
 
 type HostAdapter struct {
-    HostID  string 
-    WWN   string
+	HostID string
+	WWN    string
 }
 
 ////////////////////////////////////////////////////////////////
 //             GET Baremetal HBA Information                  //
 ////////////////////////////////////////////////////////////////
 
-func GetBaremetalHBA() (myHosts []HostAdapter, err error){
-    //Works for RedHat 5 and above (including CentOS and SUSE Linux)
-    hostDir, _ := ioutil.ReadDir("/sys/class/scsi_host/")
+func GetBaremetalHBA() (myHosts []HostAdapter, err error) {
+	//Works for RedHat 5 and above (including CentOS and SUSE Linux)
+	hostDir, _ := ioutil.ReadDir("/sys/class/scsi_host/")
 
-    for _, host := range hostDir {
-        if _, err := os.Stat("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name"); err == nil {
-            byteArray, _ := ioutil.ReadFile("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name")
-            newHost := HostAdapter{
-                HostID : host.Name(),
-                WWN : string(byteArray),
-            }
-            myHosts = append(myHosts, newHost)
-        }
-    }
-    return myHosts, nil
+	for _, host := range hostDir {
+		if _, err := os.Stat("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name"); err == nil {
+			byteArray, _ := ioutil.ReadFile("/sys/class/scsi_host/" + host.Name() + "/device/fc_host/" + host.Name() + "/port_name")
+			newHost := HostAdapter{
+				HostID: host.Name(),
+				WWN:    string(byteArray),
+			}
+			myHosts = append(myHosts, newHost)
+		}
+	}
+	return myHosts, nil
 }
 
 //////////////////////////////////////////////////////////////
@@ -1303,17 +1305,17 @@ func GetBaremetalHBA() (myHosts []HostAdapter, err error){
 //////////////////////////////////////////////////////////////
 
 type DeleteGroupReq struct {
-        DeleteGroupRequestContent DeleteGroupReqContent `json:"content"`
+	DeleteGroupRequestContent *DeleteGroupReqContent `json:"content"`
 }
 
 type DeleteGroupReqContent struct {
-        AtType                                  string                              `json:"@type"`
-        DeleteGroupRequestContentMaskingGroup   DeleteGroupReqContentMaskingGroup   `json:"MaskingGroup"`
+	AtType                                string                             `json:"@type"`
+	DeleteGroupRequestContentMaskingGroup *DeleteGroupReqContentMaskingGroup `json:"MaskingGroup"`
 }
 
 type DeleteGroupReqContentMaskingGroup struct {
-        AtType           string  `json:"@type"`
-        InstanceID       string  `json:"InstanceID"`
+	AtType     string `json:"@type"`
+	InstanceID string `json:"InstanceID"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -1322,33 +1324,33 @@ type DeleteGroupReqContentMaskingGroup struct {
 ////////////////////////////////////////////////////////////
 
 type DeleteGroupResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_returnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 /////////////////////////////////////////////////////////////////
@@ -1356,11 +1358,10 @@ type DeleteGroupResp struct {
 // Type Depends on AtType field specified in requesting struct //
 /////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostDeleteGroup(req *DeleteGroupReq, sid string) (resp *DeleteGroupResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/DeleteGroup", req, &resp)
-    return resp, err
+func (smis *SMIS) PostDeleteGroup(req *DeleteGroupReq, sid string) (resp *DeleteGroupResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/DeleteGroup", req, &resp)
+	return resp, err
 }
-
 
 //////////////////////////////////////////////////////////////
 //             REQUEST Structs used for any                 //
@@ -1368,20 +1369,20 @@ func (smis *SMIS) PostDeleteGroup(req *DeleteGroupReq, sid string) (resp *Delete
 //////////////////////////////////////////////////////////////
 
 type DeleteVolReq struct {
-        DeleteVolRequestContent DeleteVolReqContent `json:"content"`
+	DeleteVolRequestContent *DeleteVolReqContent `json:"content"`
 }
 
 type DeleteVolReqContent struct {
-        AtType                                  string                              `json:"@type"`
-        DeleteVolRequestContentElement          DeleteVolReqContentElement          `json:"TheElement"`
+	AtType                         string                      `json:"@type"`
+	DeleteVolRequestContentElement *DeleteVolReqContentElement `json:"TheElement"`
 }
 
 type DeleteVolReqContentElement struct {
-        AtType                  string  `json:"@type"`
-        DeviceID                string  `json:"DeviceID"`
-        CreationClassName       string  `json:"CreationClassName"`
-        SystemName              string  `json:"SystemName"`
-        SystemCreationClassName string  `json:"SystemCreationClassName"`
+	AtType                  string `json:"@type"`
+	DeviceID                string `json:"DeviceID"`
+	CreationClassName       string `json:"CreationClassName"`
+	SystemName              string `json:"SystemName"`
+	SystemCreationClassName string `json:"SystemCreationClassName"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -1390,42 +1391,42 @@ type DeleteVolReqContentElement struct {
 ////////////////////////////////////////////////////////////
 
 type DeleteVolResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_returnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_Parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_ReturnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 /////////////////////////////////////////////////////////////////
 //                  DELETE a Volume                            //
 /////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostDeleteVol(req *DeleteVolReq, sid string) (resp *DeleteVolResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/ReturnToStoragePool", req, &resp)
-    return resp, err
+func (smis *SMIS) PostDeleteVol(req *DeleteVolReq, sid string) (resp *DeleteVolResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_StorageConfigurationService/CreationClassName::Symm_StorageConfigurationService,Name::EMCStorageConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/ReturnToStoragePool", req, &resp)
+	return resp, err
 }
 
 //////////////////////////////////////////////////////////////
@@ -1434,20 +1435,20 @@ func (smis *SMIS) PostDeleteVol(req *DeleteVolReq, sid string) (resp *DeleteVolR
 //////////////////////////////////////////////////////////////
 
 type DeleteMaskingViewReq struct {
-        DeleteMaskingViewRequestContent DeleteMaskingViewReqContent `json:"content"`
+	DeleteMaskingViewRequestContent *DeleteMaskingViewReqContent `json:"content"`
 }
 
 type DeleteMaskingViewReqContent struct {
-        AtType                                  string                              `json:"@type"`
-        DeleteMaskingViewRequestContentPC       DeleteMaskingViewReqContentPC       `json:"ProtocolController"`
+	AtType                            string                         `json:"@type"`
+	DeleteMaskingViewRequestContentPC *DeleteMaskingViewReqContentPC `json:"ProtocolController"`
 }
 
 type DeleteMaskingViewReqContentPC struct {
-        AtType                  string  `json:"@type"`
-        DeviceID                string  `json:"DeviceID"`
-        CreationClassName       string  `json:"CreationClassName"`
-        SystemName              string  `json:"SystemName"`
-        SystemCreationClassName string  `json:"SystemCreationClassName"`
+	AtType                  string `json:"@type"`
+	DeviceID                string `json:"DeviceID"`
+	CreationClassName       string `json:"CreationClassName"`
+	SystemName              string `json:"SystemName"`
+	SystemCreationClassName string `json:"SystemCreationClassName"`
 }
 
 ////////////////////////////////////////////////////////////
@@ -1456,318 +1457,42 @@ type DeleteMaskingViewReqContentPC struct {
 ////////////////////////////////////////////////////////////
 
 type DeleteMaskingViewResp struct {
-    Entries []struct {
-        Content struct {
-            AtType       string `json:"@type"`
-            I_parameters struct {
-                I_Job struct {
-                    AtType        string `json:"@type"`
-                    E0_InstanceID string `json:"e0$InstanceID"`
-                    Xmlns_e0      string `json:"xmlns$e0"`
-                } `json:"i$Job"`
-            } `json:"i$parameters"`
-            I_returnValue int    `json:"i$returnValue"`
-        Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			AtType       string `json:"@type"`
+			I_parameters struct {
+				I_Job struct {
+					AtType        string `json:"@type"`
+					E0_InstanceID string `json:"e0$InstanceID"`
+					Xmlns_e0      string `json:"xmlns$e0"`
+				} `json:"i$Job"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
 /////////////////////////////////////////////////////////////////
 //               DELETE a Masking View                         //
 /////////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (resp *DeleteMaskingViewResp, err error){
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/DeleteMaskingView", req, &resp)
-    return resp, err
-}
-
-
-//////////////////////////////////////////////////////////////////
-//          Connects to VM Host - Either ESXi or vCenter        //
-//////////////////////////////////////////////////////////////////
-
-func connectToVMHost(insecure bool, hostURL_param, user, pass string) (cli *govmomi.Client, ctx context.Context, err error){
-
-	// Create context to store connection in
-	ctx, _ = context.WithCancel(context.Background())
-
-	// Setup URL with User/Pass/Schema
-	hostURL, err := url.Parse("https://" + hostURL_param + "/sdk")
-	hostURL.User = url.UserPassword(user,pass)
-
-	// Open connection to Host and create Binding Provider (This does the actual communication between us and the Vcenter/ESXi Host)
-	cli, err = govmomi.NewClient(ctx, hostURL, insecure)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return cli, ctx, nil
-}
-
-
-//////////////////////////////////////////////////////////////////
-//   Determines what type of Host Instance we are connected to. //
-//       Returns "VirtualCenter" for a VCenter Instance         //
-// 	       		        or                              //
-//               "HostAgent" For ESX/ESXi Instance              //
-//////////////////////////////////////////////////////////////////
-
-func typeOfVMHost(ctx context.Context, curClient *govmomi.Client) (apiType string){
-
-	serviceContent := curClient.ServiceContent
-	apiType = serviceContent.About.ApiType
-	return apiType
-}
-
-////////////////////////////////////////////////////////////////////
-//              Returns if Eth0 MAC Address of VM                 //
-////////////////////////////////////////////////////////////////////
-
-func getMACAddressOfVM(curClient *govmomi.Client, vm *object.VirtualMachine) (macAddress string, err error){
-
-	vmDeviceList, err := vm.Device(context.TODO())
-	if err != nil {
-		return "", errors.New("Cannot read VM VirtualDevices")
-	}
-        return vmDeviceList.PrimaryMacAddress(), nil
-}
-
-///////////////////////////////////////////////////////////////////
-//     Find the target VM in Host with specified MAC Address     //
-//    Using MAC address to identify VM since that is the only    //
-//       property known to the VM that its host also knows       //
-//                   WITHOUT VMWARE tools installed.             //
-///////////////////////////////////////////////////////////////////
-
-func findVMwithMAC(ctx context.Context, curClient *govmomi.Client, targetMACAddress string)(vm *object.VirtualMachine, err error){
-
-	targetMACAddress = strings.ToUpper(targetMACAddress)
-	f := find.NewFinder(curClient.Client, true)
-        allDatacenters, err := f.DatacenterList(ctx, "*")
-        if err != nil {
-                return nil, errors.New("Could not get List of Datacenters")
-        }
-
-        for _, datacenter := range allDatacenters {
-                f.SetDatacenter(datacenter)
-                allVMs, err := f.VirtualMachineList(ctx, "*")
-                if err != nil {
-                        return nil, errors.New("Could not get List of VMs")
-                }
-                for _, vm := range allVMs {
-                        VM_MAC, err := getMACAddressOfVM(curClient, vm)
-			VM_MAC = strings.ToUpper(VM_MAC)
-                        if err != nil {
-				return nil, errors.New("Could not get MAC Address of VM")
-                        }
-                        if VM_MAC == targetMACAddress {
-				return vm, nil
-			}
-                }
-        }
-	return nil, errors.New("Could not find VM with specified MAC Address of " + targetMACAddress)
-}
-
-
-///////////////////////////////////////////////////////////////////
-//     Find all possible Hosts the VM could move to (vMotion)    //
-//                    or is currently running on.                //
-//        **Need to implement when running on single Host**      //
-///////////////////////////////////////////////////////////////////
-
-func findAllPossibleHostsForVM(ctx context.Context, curClient *govmomi.Client, targetVM *object.VirtualMachine)(hosts []*object.HostSystem, err error){
-	targetResourcePool, err := targetVM.ResourcePool(ctx)
-	if err != nil {
-		return nil, errors.New("Error with finding Resource Pool of VM")
-	}
-	var resourcePoolProp mo.ResourcePool
-	err = targetResourcePool.Properties(ctx, targetResourcePool.Reference(), []string{"owner"}, &resourcePoolProp)
-
-	if err != nil {
-		return nil, errors.New("Error with finding Owner of Resource Pool")
-	}
-
-	typeOfOwningResource := resourcePoolProp.Owner.Type
-	//Scenario in which VM is apart of a Cluster (Not tied to 1 ESXi host) - VMware DRS
-	if typeOfOwningResource == "ClusterComputeResource"{
-		cluster := object.NewClusterComputeResource(curClient.Client, resourcePoolProp.Owner)
-		var clusterProp mo.ClusterComputeResource
-		err = cluster.Properties(ctx, cluster.Reference(), []string{"host"}, &clusterProp)
-		if err != nil{
-			return nil, errors.New("Error with finding Hosts of Cluster")
-		}
-
-		//convert Managed Object References into actual host_sytem objects to return
-		var hosts []*object.HostSystem
-		for _, host := range clusterProp.Host{
-			newHost := object.NewHostSystem(curClient.Client, host)
-			hosts = append(hosts, newHost)
-		}
-		return hosts, nil
-	}else {
-		return nil, errors.New("Looks like you are on a single/Non-Clustered host and we havent gotten to this yet!!")
-	}
-
-}
-
-
-///////////////////////////////////////////////////////////////////
-//     Find the WWNs of the HBA's from the Host System(s) that   //
-//                    the VM is running on.                      //
-///////////////////////////////////////////////////////////////////
-
-func getHBAWWNFromHosts(ctx context.Context, curClient *govmomi.Client, hosts []*object.HostSystem)(hostsWWN []string, err error){
-	for _, host := range hosts{
-		hostConfigManager := host.ConfigManager()
-
-		var hostConfigManagerProp mo.HostSystem
-		err := hostConfigManager.Properties(ctx, hostConfigManager.Reference(), []string{"configManager.storageSystem"}, &hostConfigManagerProp)
-		if err != nil {
-			return nil, errors.New("Error getting properties of Host Configuration Manager")
-		}
-		var hostStorageSystemProp mo.HostStorageSystem
-		err = property.DefaultCollector(curClient.Client).RetrieveOne(ctx, *hostConfigManagerProp.ConfigManager.StorageSystem,[]string{"storageDeviceInfo"}, &hostStorageSystemProp)
-		if err != nil {
-			return nil, err
-		}
-		for _ , HBA := range hostStorageSystemProp.StorageDeviceInfo.HostBusAdapter {
-			HBA, isFC := HBA.(*types.HostFibreChannelHba)
-			if(isFC){
-				hostsWWN = append(hostsWWN, fmt.Sprintf("%016X", HBA.NodeWorldWideName))
-			}
-		}
-	}
-	return hostsWWN, nil
-}
-
-
-///////////////////////////////////////////////////////////////////
-//                           Add RDM to VM.                      //
-//               RDM String Passed has to be a Device WWN.       //
-///////////////////////////////////////////////////////////////////
-
-func addRDMToVM(ctx context.Context, curClient *govmomi.Client, vm *object.VirtualMachine, deviceNAA string)(err error) {
-
-	var VM_withProp mo.VirtualMachine
-	err = vm.Properties(ctx, vm.Reference(), []string{"environmentBrowser"}, &VM_withProp)
-	if err != nil {
-		return errors.New(fmt.Sprintf("Error finding Environment Browser for VM - %S", err))
-	}
-
-	//Query VM To Find Devices avilable for attaching to VM
-	var queryConfigRequest types.QueryConfigTarget
-	queryConfigRequest.This = VM_withProp.EnvironmentBrowser
-	queryConfigResp, err := methods.QueryConfigTarget(ctx, curClient.Client, &queryConfigRequest)
-	if err != nil {
-		return errors.New(fmt.Sprintf("Error Obtaining Configuration Options of Host System that VM is On - %S", err))
-	}
-	vmConfigOptions := *queryConfigResp.Returnval
-
-
-	//Build new Virtual Device to add to VM from list of avilable devices found from our query
-	for _, ScsiDisk := range vmConfigOptions.ScsiDisk {
-		if strings.Contains(ScsiDisk.Disk.CanonicalName,deviceNAA) {
-			var rdmBacking types.VirtualDiskRawDiskMappingVer1BackingInfo
-			rdmBacking.FileName = ""
-			rdmBacking.DiskMode = "independent_persistent"
-			rdmBacking.CompatibilityMode = "physicalMode"
-			rdmBacking.DeviceName = ScsiDisk.Disk.DeviceName
-			for _, descriptor := range ScsiDisk.Disk.Descriptor {
-				if string([]rune(descriptor.Id)[:4]) == "vml." {
-					rdmBacking.LunUuid = descriptor.Id
-					break
-				}
-			}
-			var rdmDisk types.VirtualDisk
-			rdmDisk.Backing = &rdmBacking
-			//Deal with finding or creating the correct SCSI Controller
-			//Assign the controller to the new RDM in creation
-			rdmDisk.ControllerKey = 99999
-			rdmDisk.CapacityInKB = 1024
-			virtualDeviceList, err := vm.Device(ctx)
-			if err != nil {
-				return errors.New(fmt.Sprintf("Error Obtaining List of Devices Attached to VM - %s", err))
-			}
-			var c types.VirtualSCSIController
-			scsiControllers := virtualDeviceList.SelectByType(&c)
-			scsiControlledDevicesNums := new([]int)
-			for _, scsiDevice := range scsiControllers {
-					scsiDevice := scsiDevice.(types.BaseVirtualSCSIController).GetVirtualSCSIController()
-					//fmt.Printf("%T :::  %+v \n %T ::: %+v",scsiDevice, scsiDevice,scsiControllers, scsiControllers)
-					if len(scsiDevice.VirtualController.Device) < 15 {
-						rdmDisk.ControllerKey = scsiDevice.VirtualController.Key
-						scsiControlledDevicesNums = &scsiDevice.VirtualController.Device
-						break
-					}
-			}
-			//Scenario in which a new SCSI Controller needs to be created
-			if rdmDisk.ControllerKey == 99999{
-				//Maximum number of SCSI Controllers per VM is 4 in ESXi 5.5 so fail if capped otherwise create new SCSI Controller and refresh the VM
-				if len(scsiControllers) > 3 {
-					return errors.New("The VM you are attempting to attach storage to is capped at it's maximum number of SCSI Targets (60 Targets)")
-				} else {
-					//create SCSI controller then assign controllerkey
-					var newScsiController types.ParaVirtualSCSIController
-					newScsiController.SharedBus = types.VirtualSCSISharingNoSharing
-					err = vm.AddDevice(ctx, &newScsiController)
-					if err != nil {
-						return errors.New(fmt.Sprintf("Error creating SCSI Controller for RDM - %s", err))
-					}
-		                        virtualDeviceList, err = vm.Device(ctx)
-					if err != nil {
-						return errors.New(fmt.Sprintf("error Obtaining List of Devices Attached to VM - %s", err))
-					}
-		                        scsiControllers = virtualDeviceList.SelectByType(&c)
-					for _, scsiDevice := range scsiControllers {
-						scsiDevice := scsiDevice.(types.BaseVirtualSCSIController).GetVirtualSCSIController()
-						if len(scsiDevice.VirtualController.Device) < 16 {
-							rdmDisk.ControllerKey = scsiDevice.VirtualController.Key
-							scsiControlledDevicesNums = &scsiDevice.VirtualController.Device
-							break
-			                        }
-		                        }
-
-
-				}
-			}
-			//Deal with finding the correct SCSI Bus on the Controller just selected (16 per controller)
-			unitNumbers := make([]int, 16)
-			for _, deviceNum := range  *scsiControlledDevicesNums{
-				for _, device := range virtualDeviceList{
-					device := device.(types.BaseVirtualDevice).GetVirtualDevice()
-					if deviceNum == device.Key {
-						unitNumbers[device.UnitNumber] = 1
-					}
-				}
-			}
-			for i, unitNumber := range unitNumbers {
-				if unitNumber != 1 {
-					rdmDisk.UnitNumber = i
-					break
-				}
-			}
-			//Add RDM to VM
-			err = vm.AddDevice(ctx, &rdmDisk)
-			if err != nil {
-				return errors.New(fmt.Sprintf("Error adding device %+v \n Logged Item:  %s", rdmDisk, err))
-			}
-		return nil
-		}
-	}
-	return errors.New("Error adding RDM to VM")
+func (smis *SMIS) PostDeleteMaskingView(req *DeleteMaskingViewReq, sid string) (resp *DeleteMaskingViewResp, err error) {
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_ControllerConfigurationService/CreationClassName::Symm_ControllerConfigurationService,Name::EMCControllerConfigurationService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/DeleteMaskingView", req, &resp)
+	return resp, err
 }
 
 /////////////////////////////////////////////////////////
@@ -1776,19 +1501,18 @@ func addRDMToVM(ctx context.Context, curClient *govmomi.Client, vm *object.Virtu
 /////////////////////////////////////////////////////////
 
 type PostPortLoggedInReq struct {
-    PostPortLoggedInRequestContent PostPortLoggedInReqContent `json:"content"`
+	PostPortLoggedInRequestContent *PostPortLoggedInReqContent `json:"content"`
 }
 
 type PostPortLoggedInReqContent struct {
-    PostPortLoggedInRequestHardwareID PostPortLoggedInReqHardwareID `json:"HardwareID"`
-    AtType                            string                        `json:"@type"`
+	PostPortLoggedInRequestHardwareID *PostPortLoggedInReqHardwareID `json:"HardwareID"`
+	AtType                            string                         `json:"@type"`
 }
 
-type PostPortLoggedInReqHardwareID struct{
-    AtType           string  `json:"@type"`
-    InstanceID       string  `json: "InstanceID"`
+type PostPortLoggedInReqHardwareID struct {
+	AtType     string `json:"@type"`
+	InstanceID string `json: "InstanceID"`
 }
-
 
 /////////////////////////////////////////////////////////
 //               RESPONSE Structs used for             //
@@ -1796,66 +1520,66 @@ type PostPortLoggedInReqHardwareID struct{
 /////////////////////////////////////////////////////////
 
 type PostPortLoginResp struct {
-    Entries []struct {
-        Content struct {
-            _type        string `json:"@type"`
-            I_parameters struct {
-                I_TargetEndpoints []map[string] string `json:"i$TargetEndpoints"`
-            } `json:"i$parameters"`
-            I_returnValue int    `json:"i$returnValue"`
-            Xmlns_i       string `json:"xmlns$i"`
-        } `json:"content"`
-        Content_type string `json:"content-type"`
-        Links        []struct {
-            Href string `json:"href"`
-            Rel  string `json:"rel"`
-        } `json:"links"`
-        Updated string `json:"updated"`
-    } `json:"entries"`
-    ID    string `json:"id"`
-    Links []struct {
-        Href string `json:"href"`
-        Rel  string `json:"rel"`
-    } `json:"links"`
-    Updated  string `json:"updated"`
-    Xmlns_gd string `json:"xmlns$gd"`
+	Entries []struct {
+		Content struct {
+			_type        string `json:"@type"`
+			I_parameters struct {
+				I_TargetEndpoints []map[string]string `json:"i$TargetEndpoints"`
+			} `json:"i$parameters"`
+			I_returnValue int    `json:"i$returnValue"`
+			Xmlns_i       string `json:"xmlns$i"`
+		} `json:"content"`
+		Content_type string `json:"content-type"`
+		Links        []struct {
+			Href string `json:"href"`
+			Rel  string `json:"rel"`
+		} `json:"links"`
+		Updated string `json:"updated"`
+	} `json:"entries"`
+	ID    string `json:"id"`
+	Links []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"links"`
+	Updated  string `json:"updated"`
+	Xmlns_gd string `json:"xmlns$gd"`
 }
 
-type PortValues struct{
-    WWN string
-    PortNumber string
-    Director string
-    }
+type PortValues struct {
+	WWN        string
+	PortNumber string
+	Director   string
+}
 
 ///////////////////////////////////////////////////////////////
 //           Getting Ports Logged In                         //
 ///////////////////////////////////////////////////////////////
 
-func (smis *SMIS) PostPortLogins(req *PostPortLoggedInReq, sid string) (portvalues1 []PortValues,err error){
+func (smis *SMIS) PostPortLogins(req *PostPortLoggedInReq, sid string) (portvalues1 []PortValues, err error) {
 
-    var resp *PostPortLoginResp
-    var wwn string = req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID
-    wwn = "W-+-" + wwn
-    req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID = wwn
-    err = smis.query("POST","/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::" + sid + "/action/EMCGetTargetEndpoints", req, &resp)
-    var portValues []PortValues
-    var length = len(resp.Entries[0].Content.I_parameters.I_TargetEndpoints)
-    for i:= 0; i<length ; i++{
-        var m  map[string] string
-        var name string
-        m = resp.Entries[0].Content.I_parameters.I_TargetEndpoints[i]
-        name = "e"+ strconv.Itoa(i) + "$SystemName";
-        var eSystemName string = m[name]
-        eSystemNameSplit := strings.Split(eSystemName,"-+-")
-        PortAndDirector := strings.Split(eSystemNameSplit[2],"-")
-        portNumber := PortAndDirector[0]
-        director :=PortAndDirector[1]
-        PV :=PortValues{
-            WWN : wwn ,
-            PortNumber : portNumber,
-            Director : director,
-        }
-        portValues = append(portValues,PV)
-    }
-    return portValues, err
+	var resp *PostPortLoginResp
+	var wwn string = req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID
+	wwn = "W-+-" + wwn
+	req.PostPortLoggedInRequestContent.PostPortLoggedInRequestHardwareID.InstanceID = wwn
+	err = smis.query("POST", "/ecom/edaa/root/emc/instances/Symm_StorageHardwareIDManagementService/CreationClassName::Symm_StorageHardwareIDManagementService,Name::EMCStorageHardwareIDManagementService,SystemCreationClassName::Symm_StorageSystem,SystemName::"+sid+"/action/EMCGetTargetEndpoints", req, &resp)
+	var portValues []PortValues
+	var length = len(resp.Entries[0].Content.I_parameters.I_TargetEndpoints)
+	for i := 0; i < length; i++ {
+		var m map[string]string
+		var name string
+		m = resp.Entries[0].Content.I_parameters.I_TargetEndpoints[i]
+		name = "e" + strconv.Itoa(i) + "$SystemName"
+		var eSystemName string = m[name]
+		eSystemNameSplit := strings.Split(eSystemName, "-+-")
+		PortAndDirector := strings.Split(eSystemNameSplit[2], "-")
+		portNumber := PortAndDirector[0]
+		director := PortAndDirector[1]
+		PV := PortValues{
+			WWN:        wwn,
+			PortNumber: portNumber,
+			Director:   director,
+		}
+		portValues = append(portValues, PV)
+	}
+	return portValues, err
 }

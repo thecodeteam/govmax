@@ -1,0 +1,6 @@
+package: github.com/emccode/govmax
+import:
+  - package: github.com/vmware/govmomi
+    ref:     4739ba797cc0c7240e0848e724fb733e6b08bc9c
+    repo:    https://github.com/clintonskitson/govmomi
+    vcs:     git

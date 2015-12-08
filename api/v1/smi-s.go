@@ -1,21 +1,21 @@
 package apiv1
 
 import (
+	"bytes"
+	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"net/http"
-	"encoding/base64"
-	"bytes"
-	"crypto/tls"
 )
 
 type SMIS struct {
-	host string
-	port string
+	host     string
+	port     string
 	insecure bool
 	username string
 	password string
-	client *http.Client
+	client   *http.Client
 }
 
 func New(host string, port string, insecure bool, username string, password string) (*SMIS, error) {
@@ -40,7 +40,7 @@ func New(host string, port string, insecure bool, username string, password stri
 // Parses URL into properly encoded URL format //
 /////////////////////////////////////////////////
 
-func parseURL(URL string) (string){
+func parseURL(URL string) string {
 
 	var newURL string
 
@@ -102,7 +102,6 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 		URL = "https://" + smis.host + ":" + smis.port + objectPath
 	}
 
-
 	// Create http request & add auth
 	var req *http.Request
 
@@ -118,11 +117,11 @@ func (smis *SMIS) query(httpType, objectPath string, body, resp interface{}) err
 	encodedAuth := base64.StdEncoding.EncodeToString([]byte(smis.username + ":" + smis.password))
 
 	// Add header specific items
-	req.Header.Add("Authorization", "Basic " + encodedAuth)
-	req.Header.Add("Accept","application/json")
-	req.Header.Add("Content-Type","application/json")
-	req.Header.Add("Connection","keep-alive")
-	req.Header.Add("Host",smis.host + ":" + smis.port)
+	req.Header.Add("Authorization", "Basic "+encodedAuth)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Connection", "keep-alive")
+	req.Header.Add("Host", smis.host+":"+smis.port)
 
 	// Perform request
 	httpResp, err := smis.client.Do(req)
